@@ -3,12 +3,15 @@ app.py — DocuMind AI
 Entry point. White background, Settings tab removed.
 """
 
-import streamlit as st
 import time
 
-from dotenv import load_dotenv
+
 from langchain_community.vectorstores import FAISS
 from langchain_google_genai import GoogleGenerativeAIEmbeddings, ChatGoogleGenerativeAI
+
+import streamlit as st
+import os
+os.environ["GOOGLE_API_KEY"] = st.secrets["GOOGLE_API_KEY"]
 
 from utils.styles import STYLES
 from utils.pdf_processor import extract_text_from_pdfs
@@ -19,7 +22,7 @@ from components.tab_dna import render_dna_tab
 from components.tab_tools import render_tools_tab
 from components.tab_analytics import render_analytics_tab
 
-load_dotenv()
+
 
 st.set_page_config(page_title="DocuMind AI", page_icon="🧠", layout="centered")
 st.markdown(STYLES, unsafe_allow_html=True)
