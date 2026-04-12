@@ -153,13 +153,17 @@ section[data-testid="stSidebar"] + div,
 }
 
 /* ============================================================
-   CHAT INPUT
+   CHAT INPUT — force white on ALL internal elements
    ============================================================ */
-[data-testid="stChatInput"] {
+[data-testid="stChatInput"],
+[data-testid="stChatInput"] > div,
+[data-testid="stChatInput"] > div > div,
+[data-testid="stChatInput"] > div > div > div,
+div[class*="stChatInput"],
+div[class*="chatInput"] {
     background: #ffffff !important;
     border: 1.5px solid #e5e7eb !important;
     border-radius: 16px !important;
-    padding: 0.35rem 0.6rem !important;
     transition: border-color 0.2s, box-shadow 0.2s !important;
     box-shadow: 0 1px 4px rgba(0,0,0,0.06) !important;
 }
@@ -167,17 +171,26 @@ section[data-testid="stSidebar"] + div,
     border-color: #111827 !important;
     box-shadow: 0 0 0 3px rgba(17,24,39,0.08) !important;
 }
-[data-testid="stChatInput"] textarea {
-    background: transparent !important;
+[data-testid="stChatInput"] textarea,
+[data-testid="stChatInput"] textarea:focus,
+[data-testid="stChatInput"] textarea:active {
+    background: #ffffff !important;
+    background-color: #ffffff !important;
     border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
     color: #111827 !important;
     font-family: 'Inter', sans-serif !important;
     font-size: 0.95rem !important;
     line-height: 1.5 !important;
-    box-shadow: none !important;
-    outline: none !important;
+    caret-color: #111827 !important;
+    -webkit-text-fill-color: #111827 !important;
 }
-[data-testid="stChatInput"] textarea::placeholder { color: #9ca3af !important; }
+[data-testid="stChatInput"] textarea::placeholder {
+    color: #9ca3af !important;
+    -webkit-text-fill-color: #9ca3af !important;
+}
+[data-testid="stChatInput"] button[kind="primaryFormSubmit"],
 [data-testid="stChatInput"] button {
     background: #111827 !important;
     color: #ffffff !important;
@@ -185,11 +198,17 @@ section[data-testid="stSidebar"] + div,
     border: none !important;
     width: auto !important;
     transition: opacity 0.2s !important;
+    box-shadow: none !important;
 }
 [data-testid="stChatInput"] button:hover {
     opacity: 0.8 !important;
     transform: none !important;
     box-shadow: none !important;
+}
+[data-testid="stBottom"],
+[data-testid="stBottom"] > div,
+[data-testid="stBottom"] > div > div {
+    background: #ffffff !important;
 }
 
 /* ============================================================
@@ -427,10 +446,7 @@ section[data-testid="stSidebar"] + div,
     transition: background 0.15s, transform 0.15s;
     letter-spacing: 0.01em;
 }
-.dna-tag:hover {
-    background: #f3f4f6;
-    transform: translateY(-1px);
-}
+.dna-tag:hover { background: #f3f4f6; transform: translateY(-1px); }
 .dna-bar-label {
     font-size: 0.775rem;
     color: #6b7280;
@@ -616,8 +632,8 @@ section[data-testid="stSidebar"] + div,
    SUGGESTION PILLS
    ============================================================ */
 .sug-pill-wrap .stButton > button {
-    background: #111827 !important;
-    color: #ffffff !important;
+    background: #ffffff !important;
+    color: #374151 !important;
     border: 1px solid #e5e7eb !important;
     font-size: 0.855rem !important;
     font-weight: 400 !important;
@@ -629,7 +645,7 @@ section[data-testid="stSidebar"] + div,
 }
 .sug-pill-wrap .stButton > button:hover {
     border-color: #111827 !important;
-    color: #ffffff !important;
+    color: #111827 !important;
     transform: translateY(-1px) !important;
     box-shadow: 0 4px 12px rgba(0,0,0,0.1) !important;
     background: #fafafa !important;
@@ -783,11 +799,25 @@ function injectVoiceIntoChat() {
     });
 }
 
-document.addEventListener('DOMContentLoaded', () => setTimeout(injectVoiceIntoChat, 900));
+// Retry injection multiple times to handle Streamlit's delayed render
+function tryInject(attempts) {
+    if (attempts <= 0) return;
+    const ci = document.querySelector('[data-testid="stChatInput"]');
+    if (ci && !ci.querySelector('#dm-mic-btn')) {
+        injectVoiceIntoChat();
+    }
+    setTimeout(() => tryInject(attempts - 1), 600);
+}
 
+document.addEventListener('DOMContentLoaded', () => tryInject(8));
+setTimeout(() => tryInject(8), 500);
+
+// Watch DOM for Streamlit rerenders
 const _obs = new MutationObserver(() => {
     const ci = document.querySelector('[data-testid="stChatInput"]');
-    if (ci && !ci.querySelector('#dm-mic-btn')) injectVoiceIntoChat();
+    if (ci && !ci.querySelector('#dm-mic-btn')) {
+        injectVoiceIntoChat();
+    }
 });
 _obs.observe(document.body, { childList: true, subtree: true });
 </script>
