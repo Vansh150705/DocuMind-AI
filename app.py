@@ -3,15 +3,12 @@ app.py — DocuMind AI
 Entry point. White background, Settings tab removed.
 """
 
+import streamlit as st
 import time
 
-
+from dotenv import load_dotenv
 from langchain_community.vectorstores import FAISS
 from langchain_google_genai import GoogleGenerativeAIEmbeddings, ChatGoogleGenerativeAI
-
-import streamlit as st
-import os
-os.environ["GOOGLE_API_KEY"] = st.secrets["GOOGLE_API_KEY"]
 
 from utils.styles import STYLES
 from utils.pdf_processor import extract_text_from_pdfs
@@ -21,8 +18,10 @@ from components.tab_chat import render_chat_tab
 from components.tab_dna import render_dna_tab
 from components.tab_tools import render_tools_tab
 from components.tab_analytics import render_analytics_tab
+from components.tab_compare import render_compare_tab
+from components.tab_timeline import render_timeline_tab
 
-
+load_dotenv()
 
 st.set_page_config(page_title="DocuMind AI", page_icon="🧠", layout="centered")
 st.markdown(STYLES, unsafe_allow_html=True)
@@ -35,6 +34,12 @@ DEFAULTS = {
     "total_pages": 0, "total_chunks": 0, "suggested_q": None,
     "dna": None, "mode": "qa", "full_text": "", "processed": False,
     "persona": "default", "doc_language": "English",
+    # Compare feature
+    "compare_vectorstore": None, "compare_name": "",
+    "compare_full_text": "", "compare_processed": False,
+    "compare_history": [], "compare_suggested": None,
+    # Timeline feature
+    "timeline_data": None, "timeline_generated": False,
 }
 for k, v in DEFAULTS.items():
     if k not in st.session_state:
@@ -65,7 +70,6 @@ st.markdown("""
 # ============================================================
 if not st.session_state.processed:
 
-    # Premium empty state
     st.markdown("""
     <div class="empty-state">
         <div class="empty-icon-wrap">📄</div>
@@ -78,7 +82,8 @@ if not st.session_state.processed:
             <span class="empty-feature-chip">🧬 Document DNA</span>
             <span class="empty-feature-chip">💬 Smart Q&amp;A</span>
             <span class="empty-feature-chip">🛠 Auto Tools</span>
-            <span class="empty-feature-chip">📊 Analytics</span>
+            <span class="empty-feature-chip">🔀 Compare Docs</span>
+            <span class="empty-feature-chip">🕐 Timeline</span>
         </div>
     </div>
     """, unsafe_allow_html=True)
@@ -177,7 +182,6 @@ if not st.session_state.processed:
 # MAIN APP
 # ============================================================
 else:
-    # Doc info bar
     pills       = "".join([f'<span class="doc-pill">📄 {n}</span>' for n in st.session_state.pdf_names])
     lang_pill   = f'<span class="doc-pill">🌐 {st.session_state.doc_language}</span>'
     status_badge = '<span class="status-badge status-ready">● Ready</span>'
@@ -190,7 +194,6 @@ else:
     </div>
     """, unsafe_allow_html=True)
 
-    # Stats row
     c1, c2, c3, c4, c5 = st.columns(5)
     with c1:
         st.markdown(f'<div class="metric-card"><div class="metric-val">{st.session_state.total_pages}</div><div class="metric-label">Pages</div></div>', unsafe_allow_html=True)
@@ -215,12 +218,14 @@ else:
 
     st.markdown('<div class="dm-divider"></div>', unsafe_allow_html=True)
 
-    # 4 tabs — Settings tab removed
-    tab1, tab2, tab3, tab4 = st.tabs([
-        "💬  Chat", "🧬  DNA", "🛠  Tools", "📊  Analytics"
+    # 6 tabs
+    tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
+        "💬  Chat", "🧬  DNA", "🛠  Tools", "📊  Analytics", "🔀  Compare", "🕐  Timeline"
     ])
 
     with tab1: render_chat_tab()
     with tab2: render_dna_tab()
     with tab3: render_tools_tab()
     with tab4: render_analytics_tab()
+    with tab5: render_compare_tab()
+    with tab6: render_timeline_tab()
