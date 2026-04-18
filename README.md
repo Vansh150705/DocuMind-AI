@@ -22,7 +22,7 @@
 
 DocuMind AI is a production-grade **Agentic RAG (Retrieval-Augmented Generation)** system that lets you upload PDF documents and have intelligent, multi-layered AI conversations with them.
 
-Instead of just answering questions, DocuMind AI thinks before it responds — it detects vague queries, reviews its own answers, and adapts its response based on how confident it is. It also profiles your document the moment it's uploaded, supports multiple languages, and provides 5 one-click automation tools beyond Q&A.
+Instead of just answering questions, DocuMind AI thinks before it responds — it detects vague queries, reviews its own answers, adapts responses based on confidence, compares two documents side-by-side, and automatically extracts chronological timelines from any document.
 
 ---
 
@@ -30,100 +30,130 @@ Instead of just answering questions, DocuMind AI thinks before it responds — i
 
 ### 💬 Intelligent Chat
 - Upload single or multiple PDFs and ask anything about them
-- Answers are grounded in document content — no hallucination
+- Answers grounded in document content — no hallucination
 - Source chips show exactly which file and page each answer came from
 - Colour-coded confidence bar (High / Medium / Low) per answer
-- Full conversation history with smooth animations
+- Full conversation history with smooth animations and skeleton loader
 
 ### 🤖 3 Agentic AI Layers
 | Agent | What it does |
 |-------|-------------|
-| **Clarification Agent** | Detects vague queries (e.g. "explain this") before retrieval and asks for clarification instead — zero API cost |
-| **Self-Reflection Agent** | After generating an answer, the AI reviews its own response and improves it if incomplete |
-| **Confidence Adaptation Agent** | Automatically appends warnings or disclaimers based on how well-supported the answer is |
+| **Clarification Agent** | Detects vague queries before retrieval and asks for clarification — zero API cost |
+| **Self-Reflection Agent** | Reviews its own answer after generation and improves it if incomplete |
+| **Confidence Adaptation Agent** | Appends warnings or disclaimers based on retrieval confidence score |
+
+### 🔀 Document vs Document Comparison *(New)*
+- Upload a second PDF and compare it against your primary document
+- Queries both vector stores simultaneously — dual RAG retrieval
+- Colour-coded source chips: **green = Doc A**, **blue = Doc B**
+- 4 quick comparison buttons pre-loaded (differences, agreements, gaps)
+- Works for contracts, reports, research papers, proposals — any two PDFs
+
+### 🕐 Document Timeline Extractor *(New)*
+- One click extracts every date, deadline, milestone, and event from the document
+- Displays as a visual **vertical colour-coded timeline**
+- Event types: ⏰ Deadlines, 🏁 Milestones, 📌 Events, 📆 Periods, 📢 Announcements
+- High / Medium / Low priority labels
+- Filter by event type
+- Export timeline as `.txt` file
 
 ### 🧬 Document DNA
-The moment a PDF is processed, Gemini automatically generates a document fingerprint:
+Auto-generated document fingerprint on upload:
 - Inferred title and one-line summary
-- Domain (Medical / Legal / Technical / Academic / Business)
-- Tone (Formal / Conversational / Persuasive / Academic)
+- Domain, Tone, Language detection
 - Complexity, Sentiment & Informativeness scores (0–100)
-- Key themes and key entities
-- Auto-detected language
-- One unusual, non-obvious insight about the document
+- Key themes, key entities, unusual insight
 
 ### 🎭 Response Modes
-Switch how the AI responds to the same question:
-- **🎯 Standard Q&A** — Strict, factual answers from document only
-- **🧒 Explain Simply** — Like you're 10 years old, with analogies
-- **💼 Executive Brief** — Bullet points, one key insight, no fluff
-- **⚖️ Devil's Advocate** — Both sides of every claim, challenges assumptions
+- 🎯 Standard Q&A
+- 🧒 Explain Simply (ELI5)
+- 💼 Executive Brief
+- ⚖️ Devil's Advocate
 
 ### 🛠 Smart Tools (one-click)
-- 📝 Auto-Summary — 4-section structured summary
-- ❓ Quiz Generator — 5 MCQs with correct answers
-- 📧 Email Drafter — Professional email from document content
-- 🔍 Contradiction Finder — Flags inconsistencies in the document
-- 📊 Action Item Extractor — Numbered checklist with priority
+- 📝 Auto-Summary
+- ❓ Quiz Generator
+- 📧 Email Drafter
+- 🔍 Contradiction Finder
+- 📊 Action Item Extractor
 
 ### 📊 Session Analytics
 - Confidence trend per answer
 - Most asked-about keywords
-- Session overview (questions asked, avg confidence)
 - Low-confidence warnings
 
-### 🎙 Voice Input
-- Mic button inside the chat input (like ChatGPT)
-- Uses browser's built-in Web Speech API — no API key needed
-- Works in Chrome and Edge
 
 ### 🌐 Multilingual Support
-- Auto-detects document language during DNA analysis
-- All answers, summaries, and tool outputs respond in the same language
-- Powered by Gemini's native 100+ language support
+- Auto-detects document language
+- Answers in the same language automatically
 
 ### 📥 Chat Export
-- Download entire conversation as a `.txt` file
-- Includes Q&As, source references, confidence scores, and timestamps
+- Download full conversation as `.txt`
 
 ---
 
 ## 🏗 Architecture
 
-```
+```bash
 documind/
-├── app.py                    # Entry point — routing and upload flow
+├── app.py                    # Main entry point (Streamlit app)
+
 ├── utils/
-│   ├── styles.py             # CSS + voice input JavaScript
-│   ├── pdf_processor.py      # PDF reading and text chunking
-│   ├── ai_helpers.py         # Prompt building, DNA, export, analytics
-│   └── agents.py             # 3 Agentic AI features
-└── components/
-    ├── tab_chat.py           # Chat tab
-    ├── tab_dna.py            # Document DNA tab
-    ├── tab_tools.py          # Smart Tools tab
-    └── tab_analytics.py      # Analytics tab
+│   ├── styles.py             # UI styling + voice integration
+│   ├── pdf_processor.py      # PDF parsing, cleaning & chunking
+│   ├── ai_helpers.py         # Prompts, DNA generation, analytics
+│   └── agents.py             # Agentic AI logic (3 agents)
+
+├── components/
+│   ├── tab_chat.py           # Chat interface (Q&A)
+│   ├── tab_dna.py            # Document DNA visualization
+│   ├── tab_tools.py          # Smart tools (summary, quiz, etc.)
+│   ├── tab_analytics.py      # Session analytics dashboard
+│   ├── tab_compare.py        # Document comparison module
+│   └── tab_timeline.py       # Timeline extraction module
 ```
+---
+
+## ⚙️ How It Works
+
+### 📄 Document Processing
+- PDF Upload  
+- Text Extraction *(PyPDF)*  
+- Chunking *(600 chars, 80 overlap)*  
+- Embedding *(Gemini Embedding 001)*  
+- Vector Storage *(FAISS)*  
+- Document DNA Analysis *(Gemini → JSON)*  
 
 ---
 
-## 🔧 How It Works
+### 💬 Query Processing
+- User Query  
+- Clarification Agent *(handles vague queries)*  
+- Vector Similarity Search *(Top-5 chunks)*  
+- Confidence Scoring *(keyword overlap)*  
 
-```
-PDF Upload → Text Extraction (PyPDF)
-          → Chunking (RecursiveCharacterTextSplitter, 600 chars, 80 overlap)
-          → Embedding (Gemini Embedding 001)
-          → Vector Indexing (FAISS)
-          → DNA Analysis (Gemini 2.5 Flash → JSON)
+---
 
-User Query → Clarification Agent (vague? → ask for clarification)
-           → Vector Similarity Search (top-5 chunks)
-           → Confidence Scoring (keyword overlap heuristic)
-           → Answer Generation (Gemini 2.5 Flash)
-           → Self-Reflection Agent (review + improve)
-           → Confidence Adaptation (add warning/disclaimer)
-           → Display with sources + confidence bar
-```
+### 🤖 Response Generation
+- Answer Generation *(Gemini 2.5 Flash)*  
+- Self-Reflection Agent *(review & improve)*  
+- Confidence Adaptation *(warnings if needed)*  
+- Final Response with Sources + Confidence Bar  
+
+---
+
+### 🔀 Advanced Features
+
+#### Document Comparison
+- Dual FAISS Retrieval *(Doc A + Doc B)*  
+- Combined Context → Gemini  
+- Color-coded Source Attribution  
+
+#### Timeline Extraction
+- Date Extraction *(Gemini)*  
+- Structured JSON  
+- Chronological Sorting  
+- Visual Timeline Output  
 
 ---
 
@@ -131,34 +161,28 @@ User Query → Clarification Agent (vague? → ask for clarification)
 
 | Technology | Purpose |
 |-----------|---------|
-| **Python 3.12** | Core language |
-| **Streamlit** | Frontend web framework |
-| **LangChain** | AI orchestration (text splitting, model wrappers, FAISS integration) |
-| **Google Gemini 2.5 Flash** | LLM for answer generation and DNA analysis |
-| **Gemini Embedding 001** | Text → vector conversion |
-| **FAISS** | In-memory vector similarity search |
-| **PyPDF** | PDF text extraction |
-| **Web Speech API** | Browser-native voice input |
-| **python-dotenv** | Environment variable management |
+| Python 3.12 | Core language |
+| Streamlit | Frontend framework |
+| LangChain | AI orchestration |
+| Google Gemini 2.5 Flash | LLM — answers, DNA, comparison, timeline |
+| Gemini Embedding 001 | Text → vector conversion |
+| FAISS | In-memory vector similarity search |
+| PyPDF | PDF text extraction |
+| Web Speech API | Browser-native voice input |
+| python-dotenv | Environment variable management |
 
 ---
 
-## 🗂 Requirements
+## 🛣 Roadmap
 
-```txt
-streamlit
-langchain
-langchain-community
-langchain-google-genai
-langchain-text-splitters
-faiss-cpu
-pypdf
-python-dotenv
-google-generativeai
-```
+- [ ] Web page Q&A (paste a URL, chat with any website)
+- [ ] YouTube video Q&A (transcript extraction)
+- [ ] Persistent vector storage
+- [ ] OCR for scanned PDFs
+- [ ] User authentication
+- [ ] Docker deployment
 
 ---
-
 
 ## 👨‍💻 Author
 
@@ -166,12 +190,6 @@ google-generativeai
 - 📧 vansh150705@gmail.com
 - 💼 [LinkedIn](https://www.linkedin.com/in/vansh-mahajan-napv/)
 - 🐙 [GitHub](https://github.com/Vansh150705)
-
----
-
-## 📄 License
-
-This project is licensed under the MIT License.
 
 ---
 
