@@ -20,6 +20,9 @@ from components.tab_tools import render_tools_tab
 from components.tab_analytics import render_analytics_tab
 from components.tab_compare import render_compare_tab
 from components.tab_timeline import render_timeline_tab
+from components.tab_web import render_web_tab
+from components.tab_youtube import render_youtube_tab
+from components.tab_flashcards import render_flashcards_tab
 
 load_dotenv()
 
@@ -40,6 +43,13 @@ DEFAULTS = {
     "compare_history": [], "compare_suggested": None,
     # Timeline feature
     "timeline_data": None, "timeline_generated": False,
+    "web_vectorstore": None, "web_title": "", "web_url": "",
+    "web_text": "", "web_chunks": 0, "web_history": [],
+    "web_processed": False, "web_suggested": None,
+    "yt_vectorstore": None, "yt_video_id": "", "yt_url": "",
+    "yt_text": "", "yt_chunks": 0, "yt_segments": [],
+    "yt_duration": "", "yt_history": [], "yt_processed": False, "yt_suggested": None,
+    "flashcards": None,
 }
 for k, v in DEFAULTS.items():
     if k not in st.session_state:
@@ -219,8 +229,9 @@ else:
     st.markdown('<div class="dm-divider"></div>', unsafe_allow_html=True)
 
     # 6 tabs
-    tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
-        "💬  Chat", "🧬  DNA", "🛠  Tools", "📊  Analytics", "🔀  Compare", "🕐  Timeline"
+    tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8, tab9 = st.tabs([
+        "💬  Chat", "🧬  DNA", "🛠  Tools", "📊  Analytics",
+        "🔀  Compare", "🕐  Timeline", "🌐  Web", "▶  YouTube", "🃏  Flashcards"
     ])
 
     with tab1: render_chat_tab()
@@ -229,3 +240,6 @@ else:
     with tab4: render_analytics_tab()
     with tab5: render_compare_tab()
     with tab6: render_timeline_tab()
+    with tab7: render_web_tab()
+    with tab8: render_youtube_tab()
+    with tab9: render_flashcards_tab()
