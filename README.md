@@ -42,14 +42,14 @@ Instead of just answering questions, DocuMind AI thinks before it responds — i
 | **Self-Reflection Agent** | Reviews its own answer after generation and improves it if incomplete |
 | **Confidence Adaptation Agent** | Appends warnings or disclaimers based on retrieval confidence score |
 
-### 🔀 Document vs Document Comparison *(New)*
+### 🔀 Document vs Document Comparison 
 - Upload a second PDF and compare it against your primary document
 - Queries both vector stores simultaneously — dual RAG retrieval
 - Colour-coded source chips: **green = Doc A**, **blue = Doc B**
 - 4 quick comparison buttons pre-loaded (differences, agreements, gaps)
 - Works for contracts, reports, research papers, proposals — any two PDFs
 
-### 🕐 Document Timeline Extractor *(New)*
+### 🕐 Document Timeline Extractor 
 - One click extracts every date, deadline, milestone, and event from the document
 - Displays as a visual **vertical colour-coded timeline**
 - Event types: ⏰ Deadlines, 🏁 Milestones, 📌 Events, 📆 Periods, 📢 Announcements
