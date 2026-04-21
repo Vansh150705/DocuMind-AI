@@ -1,6 +1,6 @@
 """
 components/tab_timeline.py
-Document Timeline Extractor
+Document Timeline Extractor — NO inline styles in HTML, only CSS classes.
 """
 
 import streamlit as st
@@ -15,21 +15,19 @@ def extract_timeline(full_text: str, llm) -> list:
     sample = full_text[:6000]
     prompt = f"""You are a document analyst. Extract ALL dates, events, deadlines, and time-referenced information from this document.
 
-Return ONLY a valid JSON array (no markdown, no backticks) in this exact format:
+Return ONLY a valid JSON array (no markdown, no backticks):
 [
   {{
     "date": "exact date or period as written in document",
     "sort_key": "YYYY-MM-DD format for sorting, best estimate",
-    "event": "clear description of what happened or is due (under 20 words)",
+    "event": "clear description under 20 words",
     "type": "one of: deadline / milestone / event / period / announcement / other",
     "importance": "high / medium / low"
   }}
 ]
 
-Rules:
-- Extract EVERY date mentioned, even vague ones like Q1 2025 or early 2024
-- If no dates exist, return empty array: []
-- Sort by sort_key ascending
+If no dates exist, return: []
+Sort by sort_key ascending.
 
 Document:
 {sample}"""
@@ -53,10 +51,10 @@ Document:
 def render_timeline_tab():
 
     st.markdown(
-        '<div style="font-size:0.875rem;color:#6b7280;margin-bottom:1.3rem;line-height:1.65;">'
+        '<p style="font-size:0.875rem;color:#6b7280;margin-bottom:1.3rem;line-height:1.65;">'
         'Automatically extracts all dates, events, deadlines, and milestones '
         'and displays them as a chronological timeline.'
-        '</div>',
+        '</p>',
         unsafe_allow_html=True
     )
 
@@ -74,7 +72,6 @@ def render_timeline_tab():
             st.rerun()
         return
 
-    # Re-extract button
     col_r, _ = st.columns([1, 3])
     with col_r:
         st.markdown('<div class="light-btn">', unsafe_allow_html=True)
@@ -87,15 +84,7 @@ def render_timeline_tab():
     timeline = st.session_state.timeline_data
 
     if not timeline:
-        st.markdown("""
-        <div style="text-align:center;padding:3rem 1rem;">
-            <div style="font-size:2rem;margin-bottom:0.8rem;">📅</div>
-            <div style="font-size:1rem;color:#6b7280;font-weight:500;">No dates found</div>
-            <div style="font-size:0.85rem;color:#9ca3af;margin-top:0.4rem;">
-                This document does not appear to contain specific dates or timeline events.
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
+        st.info("No dates or timeline events found in this document.")
         return
 
     # Filter
@@ -125,99 +114,88 @@ def render_timeline_tab():
     with col3:
         st.markdown(f'<div class="metric-card"><div class="metric-val">{len(types)}</div><div class="metric-label">Event Types</div></div>', unsafe_allow_html=True)
 
-    st.markdown('<div style="height:1rem;"></div>', unsafe_allow_html=True)
+    st.markdown("<br>", unsafe_allow_html=True)
 
-    # Inject CSS classes — no inline styles on timeline cards
+    # CSS — ALL styling here, zero inline styles in HTML below
     st.markdown("""
     <style>
-    .tl-wrap { position:relative; padding-left:2rem; margin-top:0.5rem; }
-    .tl-line { position:absolute; left:7px; top:8px; bottom:8px; width:2px; background:#e5e7eb; border-radius:2px; }
-    .tl-item { position:relative; margin-bottom:0.65rem; }
-    .tl-dot  { position:absolute; left:-1.65rem; top:0.85rem; width:14px; height:14px;
-                border-radius:50%; border:2px solid #ffffff; }
-
-    .tl-card { border-radius:12px; padding:0.8rem 1rem; border:1px solid; }
-
-    .tl-type  { font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; }
+    .tl-wrap  { position:relative; padding-left:2rem; margin-top:0.5rem; }
+    .tl-line  { position:absolute; left:7px; top:4px; bottom:4px; width:2px;
+                background:#e5e7eb; border-radius:2px; }
+    .tl-item  { position:relative; margin-bottom:0.7rem; }
+    .tl-card  { border-radius:12px; padding:0.75rem 1rem; border:1px solid #e5e7eb;
+                background:#f9fafb; }
+    .tl-head  { display:flex; justify-content:space-between; align-items:center;
+                margin-bottom:0.3rem; }
+    .tl-icon  { font-size:0.7rem; font-weight:700; text-transform:uppercase;
+                letter-spacing:0.08em; }
     .tl-pri   { font-size:0.7rem; color:#9ca3af; font-weight:500; }
-    .tl-date  { font-size:0.8rem; font-weight:700; color:#111827; margin-top:0.2rem; }
-    .tl-event { font-size:0.875rem; color:#374151; margin-top:0.3rem; line-height:1.55; }
+    .tl-date  { font-size:0.82rem; font-weight:700; color:#111827; margin-bottom:0.2rem; }
+    .tl-event { font-size:0.875rem; color:#374151; line-height:1.55; }
+    .tl-dot   { position:absolute; left:-1.65rem; top:0.9rem; width:13px; height:13px;
+                border-radius:50%; border:2px solid #ffffff; background:#9ca3af; }
 
-    .tl-deadline     { background:#fef2f2; border-color:#fca5a5; }
-    .tl-deadline .tl-dot  { background:#dc2626; box-shadow:0 0 0 3px #dc262633; }
-    .tl-deadline .tl-type { color:#dc2626; }
+    .type-deadline     { background:#fef2f2 !important; border-color:#fca5a5 !important; }
+    .type-milestone    { background:#f0fdf4 !important; border-color:#86efac !important; }
+    .type-event        { background:#eff6ff !important; border-color:#93c5fd !important; }
+    .type-period       { background:#fefce8 !important; border-color:#fde68a !important; }
+    .type-announcement { background:#faf5ff !important; border-color:#d8b4fe !important; }
+    .type-other        { background:#f9fafb !important; border-color:#e5e7eb !important; }
 
-    .tl-milestone     { background:#f0fdf4; border-color:#86efac; }
-    .tl-milestone .tl-dot  { background:#16a34a; box-shadow:0 0 0 3px #16a34a33; }
-    .tl-milestone .tl-type { color:#16a34a; }
+    .dot-deadline     { background:#dc2626 !important; box-shadow:0 0 0 3px #dc262633; }
+    .dot-milestone    { background:#16a34a !important; box-shadow:0 0 0 3px #16a34a33; }
+    .dot-event        { background:#2563eb !important; box-shadow:0 0 0 3px #2563eb33; }
+    .dot-period       { background:#d97706 !important; box-shadow:0 0 0 3px #d9770633; }
+    .dot-announcement { background:#9333ea !important; box-shadow:0 0 0 3px #9333ea33; }
+    .dot-other        { background:#6b7280 !important; box-shadow:0 0 0 3px #6b728033; }
 
-    .tl-event-type     { background:#eff6ff; border-color:#93c5fd; }
-    .tl-event-type .tl-dot  { background:#2563eb; box-shadow:0 0 0 3px #2563eb33; }
-    .tl-event-type .tl-type { color:#2563eb; }
-
-    .tl-period     { background:#fefce8; border-color:#fde68a; }
-    .tl-period .tl-dot  { background:#d97706; box-shadow:0 0 0 3px #d9770633; }
-    .tl-period .tl-type { color:#d97706; }
-
-    .tl-announcement     { background:#faf5ff; border-color:#d8b4fe; }
-    .tl-announcement .tl-dot  { background:#9333ea; box-shadow:0 0 0 3px #9333ea33; }
-    .tl-announcement .tl-type { color:#9333ea; }
-
-    .tl-other     { background:#f9fafb; border-color:#e5e7eb; }
-    .tl-other .tl-dot  { background:#6b7280; box-shadow:0 0 0 3px #6b728033; }
-    .tl-other .tl-type { color:#6b7280; }
+    .icon-deadline     { color:#dc2626 !important; }
+    .icon-milestone    { color:#16a34a !important; }
+    .icon-event        { color:#2563eb !important; }
+    .icon-period       { color:#d97706 !important; }
+    .icon-announcement { color:#9333ea !important; }
+    .icon-other        { color:#6b7280 !important; }
     </style>
     """, unsafe_allow_html=True)
 
-    # Type → CSS class mapping
-    type_class = {
-        "deadline": "tl-deadline",
-        "milestone": "tl-milestone",
-        "event": "tl-event-type",
-        "period": "tl-period",
-        "announcement": "tl-announcement",
-        "other": "tl-other",
-    }
     type_icon = {
         "deadline": "⏰ Deadline", "milestone": "🏁 Milestone",
         "event": "📌 Event", "period": "📆 Period",
         "announcement": "📢 Announcement", "other": "📋 Other",
     }
-    pri_label = {
-        "high": "⬆ High priority",
-        "medium": "— Medium",
-        "low": "↓ Low"
-    }
+    pri_label = {"high": "⬆ High", "medium": "— Medium", "low": "↓ Low"}
 
-    # Build timeline HTML using only CSS classes
-    html = '<div class="tl-wrap"><div class="tl-line"></div>'
+    # Build HTML — ZERO inline styles, only class names
+    rows = ""
     for event in filtered:
-        etype  = event.get("type", "other")
-        imp    = event.get("importance", "medium")
-        css    = type_class.get(etype, "tl-other")
-        icon   = type_icon.get(etype, "📋 Other")
-        date   = event.get("date", "—")
-        desc   = event.get("event", "")
-        pri    = pri_label.get(imp, "— Medium")
+        etype = event.get("type", "other")
+        imp   = event.get("importance", "medium")
+        icon  = type_icon.get(etype, "📋 Other")
+        date  = event.get("date", "—")
+        desc  = event.get("event", "")
+        pri   = pri_label.get(imp, "— Medium")
 
-        html += f"""
-        <div class="tl-item">
-            <div class="tl-dot {css}"></div>
-            <div class="tl-card {css}">
-                <div style="display:flex;justify-content:space-between;align-items:center;">
-                    <span class="tl-type {css}">{icon}</span>
-                    <span class="tl-pri">{pri}</span>
-                </div>
-                <div class="tl-date">📅 {date}</div>
-                <div class="tl-event">{desc}</div>
-            </div>
-        </div>
-        """
-    html += '</div>'
-    st.markdown(html, unsafe_allow_html=True)
+        rows += (
+            f'<div class="tl-item">'
+            f'<div class="tl-dot dot-{etype}"></div>'
+            f'<div class="tl-card type-{etype}">'
+            f'<div class="tl-head">'
+            f'<span class="tl-icon icon-{etype}">{icon}</span>'
+            f'<span class="tl-pri">{pri}</span>'
+            f'</div>'
+            f'<div class="tl-date">📅 {date}</div>'
+            f'<div class="tl-event">{desc}</div>'
+            f'</div>'
+            f'</div>'
+        )
+
+    st.markdown(
+        f'<div class="tl-wrap"><div class="tl-line"></div>{rows}</div>',
+        unsafe_allow_html=True
+    )
 
     # Export
-    st.markdown('<div style="height:1.2rem;"></div>', unsafe_allow_html=True)
+    st.markdown("<br>", unsafe_allow_html=True)
     lines = ["DOCUMIND AI — DOCUMENT TIMELINE", "=" * 50, ""]
     for e in timeline:
         lines.append(f"[{e.get('type','').upper()}] {e.get('date','')}")
