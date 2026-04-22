@@ -149,7 +149,7 @@ def render_timeline_tab():
     .dot-announcement { background:#9333ea !important; box-shadow:0 0 0 3px #9333ea33; }
     .dot-other        { background:#6b7280 !important; box-shadow:0 0 0 3px #6b728033; }
 
-    .icon-deadline     { color:#dc2626 !important; }
+    .icon-deadline     { color:#dc2625 !important; }
     .icon-milestone    { color:#16a34a !important; }
     .icon-event        { color:#2563eb !important; }
     .icon-period       { color:#d97706 !important; }
