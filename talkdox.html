@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>TalkDox AI — Chat with any PDF, Website, or YouTube Video</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --black: #0a0a0a;
+  --white: #ffffff;
+  --gray-50: #f8f8f8;
+  --gray-100: #f0f0f0;
+  --gray-200: #e2e2e2;
+  --gray-400: #a0a0a0;
+  --gray-600: #5a5a5a;
+  --accent: #111111;
+  --radius: 16px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--white);
+  color: var(--black);
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4 { font-family: 'Syne', sans-serif; }
+
+/* ── ANNOUNCEMENT BANNER ── */
+.banner {
+  background: var(--black);
+  color: var(--white);
+  text-align: center;
+  padding: 10px 24px;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+.banner a { color: #fff; text-decoration: underline; }
+
+/* ── NAV ── */
+nav {
+  position: fixed;
+  top: 32px;
+  left: 0; right: 0;
+  z-index: 100;
+  padding: 0 40px;
+}
+.nav-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--gray-200);
+  border-radius: 100px;
+  padding: 14px 28px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  transition: all 0.3s ease;
+}
+.nav-logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 20px; }
+.nav-links { display: flex; gap: 32px; }
+.nav-links a {
+  font-size: 14px; font-weight: 500; color: var(--gray-600);
+  text-decoration: none; transition: color 0.2s;
+}
+.nav-links a:hover { color: var(--black); }
+.nav-cta {
+  background: var(--black); color: var(--white);
+  border: none; border-radius: 100px;
+  padding: 10px 24px; font-size: 14px; font-weight: 600;
+  cursor: pointer; font-family: 'DM Sans', sans-serif;
+  transition: all 0.2s; letter-spacing: -0.01em;
+}
+.nav-cta:hover { background: #333; transform: translateY(-1px); }
+
+/* ── HERO ── */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  padding: 140px 40px 80px;
+  position: relative;
+  overflow: hidden;
+  background: var(--white);
+}
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, #e0e0e0 1px, transparent 1px);
+  background-size: 28px 28px;
+  opacity: 0.6;
+}
+.hero-glow {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 700px; height: 700px;
+  background: radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(255,255,255,0) 70%);
+  pointer-events: none;
+}
+.hero-inner {
+  max-width: 1200px; margin: 0 auto; width: 100%;
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 60px; align-items: center;
+  position: relative; z-index: 2;
+}
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--gray-50); border: 1px solid var(--gray-200);
+  border-radius: 100px; padding: 6px 14px;
+  font-size: 12px; font-weight: 600;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--gray-600); margin-bottom: 24px;
+}
+.hero-badge span { width: 6px; height: 6px; background: #22c55e; border-radius: 50%; animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(1.3)} }
+
+.hero-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 68px; font-weight: 800;
+  line-height: 1.0; letter-spacing: -0.04em;
+  margin-bottom: 20px;
+}
+.hero-title em { font-style: italic; font-weight: 300; }
+.typewriter-wrap { display: inline-block; position: relative; min-width: 300px; }
+#typewriter { color: var(--black); border-right: 3px solid var(--black); padding-right: 4px; animation: blink 1s step-end infinite; }
+@keyframes blink { 50%{border-color:transparent} }
+
+.hero-sub {
+  font-size: 18px; font-weight: 400; color: var(--gray-600);
+  line-height: 1.7; margin-bottom: 36px; max-width: 480px;
+}
+.hero-actions { display: flex; gap: 14px; align-items: center; margin-bottom: 40px; }
+.btn-primary {
+  background: var(--black); color: var(--white);
+  border: none; border-radius: 100px;
+  padding: 16px 32px; font-size: 16px; font-weight: 600;
+  cursor: pointer; font-family: 'DM Sans', sans-serif;
+  transition: all 0.25s; display: flex; align-items: center; gap: 8px;
+  letter-spacing: -0.01em;
+}
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(0,0,0,0.2); }
+.btn-outline {
+  background: transparent; color: var(--black);
+  border: 1.5px solid var(--gray-200);
+  border-radius: 100px; padding: 16px 32px;
+  font-size: 16px; font-weight: 500;
+  cursor: pointer; font-family: 'DM Sans', sans-serif;
+  transition: all 0.25s; display: flex; align-items: center; gap: 8px;
+}
+.btn-outline:hover { border-color: var(--black); transform: translateY(-2px); }
+.hero-social {
+  font-size: 13px; color: var(--gray-400);
+  display: flex; align-items: center; gap: 8px;
+}
+.avatar-stack { display: flex; }
+.avatar-stack img {
+  width: 28px; height: 28px; border-radius: 50%;
+  border: 2px solid white; margin-left: -8px;
+}
+.avatar-stack img:first-child { margin-left: 0; }
+
+/* ── HERO VISUAL ── */
+.hero-visual { position: relative; height: 520px; }
+.browser-frame {
+  background: var(--white);
+  border: 1.5px solid var(--gray-200);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 24px 80px rgba(0,0,0,0.12);
+  position: absolute;
+  right: 0; top: 20px;
+  width: 100%;
+  animation: floatUp 6s ease-in-out infinite;
+}
+@keyframes floatUp { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-12px)} }
+.browser-bar {
+  background: var(--gray-50); padding: 12px 16px;
+  display: flex; align-items: center; gap: 12px;
+  border-bottom: 1px solid var(--gray-200);
+}
+.browser-dots { display: flex; gap: 6px; }
+.browser-dots span { width: 10px; height: 10px; border-radius: 50%; }
+.dot-red { background: #ff5f57; }
+.dot-yellow { background: #febc2e; }
+.dot-green { background: #28c840; }
+.browser-url {
+  flex: 1; background: var(--white);
+  border: 1px solid var(--gray-200); border-radius: 8px;
+  padding: 5px 12px; font-size: 11px; color: var(--gray-400);
+  font-family: 'DM Sans', sans-serif;
+}
+.browser-content { padding: 20px; display: grid; grid-template-columns: 1fr 1.2fr; gap: 16px; height: 380px; }
+
+/* Doc panel */
+.doc-panel {
+  background: var(--gray-50); border-radius: 12px;
+  padding: 16px; border: 1px solid var(--gray-200);
+  overflow: hidden;
+}
+.doc-header { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; }
+.doc-icon { width: 32px; height: 32px; background: #fee2e2; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+.doc-title { font-size: 12px; font-weight: 600; color: var(--black); }
+.doc-meta { font-size: 10px; color: var(--gray-400); }
+.doc-lines { display: flex; flex-direction: column; gap: 6px; }
+.doc-line { height: 8px; background: var(--gray-200); border-radius: 4px; animation: shimmer 2s ease-in-out infinite; }
+.doc-line:nth-child(1) { width: 100%; animation-delay: 0s; }
+.doc-line:nth-child(2) { width: 85%; animation-delay: 0.1s; }
+.doc-line:nth-child(3) { width: 92%; animation-delay: 0.2s; }
+.doc-line:nth-child(4) { width: 70%; animation-delay: 0.3s; }
+.doc-line:nth-child(5) { width: 88%; animation-delay: 0.4s; }
+.doc-line:nth-child(6) { width: 60%; animation-delay: 0.5s; }
+@keyframes shimmer { 0%,100%{opacity:0.4} 50%{opacity:0.8} }
+
+/* Chat panel */
+.chat-panel { display: flex; flex-direction: column; gap: 10px; overflow: hidden; }
+.chat-msg { display: flex; gap: 8px; align-items: flex-end; }
+.chat-msg.user { flex-direction: row-reverse; }
+.chat-avatar {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: var(--gray-200); flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px;
+}
+.chat-avatar.ai-avatar { background: var(--black); }
+.chat-bubble {
+  max-width: 85%; padding: 10px 13px;
+  border-radius: 14px; font-size: 11.5px; line-height: 1.5;
+  font-family: 'DM Sans', sans-serif;
+}
+.chat-bubble.ai { background: var(--gray-50); border: 1px solid var(--gray-200); color: var(--black); border-bottom-left-radius: 4px; }
+.chat-bubble.user-bubble { background: var(--black); color: var(--white); border-bottom-right-radius: 4px; }
+.chat-input-bar {
+  display: flex; gap: 8px; align-items: center;
+  border: 1px solid var(--gray-200); border-radius: 12px;
+  padding: 10px 14px; margin-top: auto;
+  background: var(--white);
+}
+.chat-input-bar input {
+  flex: 1; border: none; outline: none; font-size: 11px;
+  font-family: 'DM Sans', sans-serif; color: var(--gray-600);
+  background: transparent;
+}
+.send-btn { background: var(--black); color: white; border: none; border-radius: 8px; width: 26px; height: 26px; cursor: pointer; font-size: 12px; display: flex; align-items: center; justify-content: center; }
+
+/* Confidence badge */
+.conf-badge {
+  position: absolute; top: 80px; left: -20px;
+  background: var(--white); border: 1px solid var(--gray-200);
+  border-radius: 12px; padding: 10px 14px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+  font-size: 11px; z-index: 10;
+  animation: slideInLeft 1s ease 0.5s both;
+}
+@keyframes slideInLeft { from{opacity:0;transform:translateX(-20px)} to{opacity:1;transform:translateX(0)} }
+.conf-label { font-weight: 600; font-size: 10px; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.06em; }
+.conf-bar { width: 120px; height: 6px; background: var(--gray-200); border-radius: 3px; margin-top: 4px; overflow: hidden; }
+.conf-fill { height: 100%; background: #22c55e; border-radius: 3px; width: 87%; }
+
+.source-badge {
+  position: absolute; bottom: 60px; left: -30px;
+  background: var(--black); color: var(--white);
+  border-radius: 12px; padding: 10px 14px;
+  font-size: 11px; font-weight: 600; z-index: 10;
+  animation: slideInLeft 1s ease 0.8s both;
+  display: flex; align-items: center; gap: 6px;
+}
+
+/* ── CHARACTER ILLUSTRATIONS ── */
+.character-section {
+  padding: 100px 40px;
+  background: var(--gray-50);
+  overflow: hidden;
+  position: relative;
+}
+.char-section-label {
+  text-align: center; font-size: 12px; font-weight: 600;
+  letter-spacing: 0.12em; text-transform: uppercase; color: var(--gray-400);
+  margin-bottom: 16px;
+}
+.char-section-title {
+  text-align: center; font-size: 52px; font-weight: 800;
+  letter-spacing: -0.04em; margin-bottom: 16px;
+  line-height: 1.05;
+}
+.char-section-sub {
+  text-align: center; font-size: 18px; color: var(--gray-600);
+  margin-bottom: 80px; font-weight: 400;
+}
+.characters-grid {
+  max-width: 1200px; margin: 0 auto;
+  display: grid; grid-template-columns: 1fr 1fr 1fr;
+  gap: 32px;
+}
+.character-card {
+  background: var(--white);
+  border: 1.5px solid var(--gray-200);
+  border-radius: 24px; padding: 40px 32px;
+  text-align: center;
+  transition: all 0.35s cubic-bezier(0.4,0,0.2,1);
+  position: relative; overflow: hidden;
+}
+.character-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+  border-color: var(--black);
+}
+.char-illustration { width: 200px; height: 200px; margin: 0 auto 28px; }
+.char-tag {
+  display: inline-block; background: var(--gray-100);
+  border-radius: 100px; padding: 4px 12px;
+  font-size: 11px; font-weight: 600; letter-spacing: 0.06em;
+  text-transform: uppercase; color: var(--gray-600);
+  margin-bottom: 12px;
+}
+.char-name { font-size: 26px; font-weight: 800; letter-spacing: -0.03em; margin-bottom: 10px; }
+.char-desc { font-size: 15px; color: var(--gray-600); line-height: 1.65; }
+
+/* ── STATS BAR ── */
+.stats-bar {
+  background: var(--black); padding: 48px 40px;
+}
+.stats-inner {
+  max-width: 1200px; margin: 0 auto;
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 40px; text-align: center;
+}
+.stat-num {
+  font-family: 'Syne', sans-serif;
+  font-size: 56px; font-weight: 800;
+  color: var(--white); letter-spacing: -0.04em; line-height: 1;
+  margin-bottom: 8px;
+}
+.stat-label {
+  font-size: 13px; color: rgba(255,255,255,0.4);
+  text-transform: uppercase; letter-spacing: 0.1em; font-weight: 500;
+}
+
+/* ── FEATURES ── */
+.features { padding: 100px 40px; background: var(--white); }
+.features-inner { max-width: 1200px; margin: 0 auto; }
+.section-header { margin-bottom: 60px; }
+.section-label {
+  font-size: 12px; font-weight: 600; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--gray-400); margin-bottom: 12px;
+}
+.section-title { font-size: 52px; font-weight: 800; letter-spacing: -0.04em; line-height: 1.05; max-width: 500px; }
+.section-sub { font-size: 18px; color: var(--gray-600); margin-top: 12px; max-width: 480px; }
+.features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.feature-card {
+  background: var(--gray-50); border: 1.5px solid var(--gray-200);
+  border-radius: 20px; padding: 32px;
+  transition: all 0.3s ease;
+  position: relative; overflow: hidden;
+}
+.feature-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,0.08); border-color: var(--gray-400); }
+.feature-card.dark { background: var(--black); border-color: var(--black); }
+.feature-card.dark .feat-title { color: var(--white); }
+.feature-card.dark .feat-desc { color: rgba(255,255,255,0.5); }
+.feat-icon {
+  width: 48px; height: 48px; border-radius: 14px;
+  background: var(--white); border: 1px solid var(--gray-200);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+.feature-card.dark .feat-icon { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.1); }
+.feat-title { font-size: 20px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 10px; }
+.feat-desc { font-size: 14px; color: var(--gray-600); line-height: 1.65; }
+
+/* ── HOW IT WORKS ── */
+.how { padding: 100px 40px; background: var(--gray-50); }
+.how-inner { max-width: 1200px; margin: 0 auto; }
+.steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; position: relative; margin-top: 60px; }
+.steps::before {
+  content: ''; position: absolute;
+  top: 56px; left: calc(100%/6); right: calc(100%/6);
+  height: 1.5px; background: linear-gradient(to right, var(--gray-200), var(--black), var(--gray-200));
+  z-index: 0;
+}
+.step { text-align: center; position: relative; z-index: 1; padding: 0 24px; }
+.step-num {
+  width: 56px; height: 56px; border-radius: 50%;
+  background: var(--white); border: 1.5px solid var(--gray-200);
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 24px;
+  font-family: 'Syne', sans-serif; font-weight: 800; font-size: 20px;
+  position: relative; z-index: 2;
+  transition: all 0.3s;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+.step:hover .step-num { background: var(--black); color: var(--white); border-color: var(--black); transform: scale(1.1); }
+.step-title { font-size: 22px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 10px; }
+.step-desc { font-size: 14px; color: var(--gray-600); line-height: 1.65; }
+
+/* ── CTA ── */
+.cta-section { padding: 80px 40px; background: var(--white); }
+.cta-inner {
+  max-width: 1200px; margin: 0 auto;
+  background: var(--black); border-radius: 32px;
+  padding: 80px; text-align: center;
+  position: relative; overflow: hidden;
+}
+.cta-dots {
+  position: absolute; inset: 0;
+  background-image: radial-gradient(circle, rgba(255,255,255,0.07) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+.cta-inner h2 {
+  color: var(--white); font-size: 56px; font-weight: 800;
+  letter-spacing: -0.04em; line-height: 1.05; margin-bottom: 16px;
+  position: relative; z-index: 1;
+}
+.cta-inner p {
+  color: rgba(255,255,255,0.5); font-size: 18px;
+  margin-bottom: 40px; position: relative; z-index: 1;
+}
+.cta-btns { display: flex; justify-content: center; gap: 14px; position: relative; z-index: 1; }
+.btn-white {
+  background: var(--white); color: var(--black);
+  border: none; border-radius: 100px; padding: 16px 36px;
+  font-size: 16px; font-weight: 600; cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  transition: all 0.25s;
+}
+.btn-white:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(255,255,255,0.2); }
+.btn-ghost {
+  background: transparent; color: rgba(255,255,255,0.6);
+  border: 1.5px solid rgba(255,255,255,0.15);
+  border-radius: 100px; padding: 16px 36px;
+  font-size: 16px; font-weight: 500; cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  transition: all 0.25s;
+}
+.btn-ghost:hover { border-color: rgba(255,255,255,0.4); color: white; }
+
+/* ── FOOTER ── */
+footer {
+  background: var(--gray-50);
+  border-top: 1px solid var(--gray-200);
+  padding: 60px 40px 40px;
+}
+.footer-inner { max-width: 1200px; margin: 0 auto; }
+.footer-top { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 48px; }
+.footer-logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 22px; margin-bottom: 12px; }
+.footer-tagline { font-size: 14px; color: var(--gray-600); line-height: 1.6; max-width: 240px; }
+.footer-col h4 { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 16px; color: var(--gray-400); }
+.footer-col a { display: block; font-size: 14px; color: var(--gray-600); text-decoration: none; margin-bottom: 10px; transition: color 0.2s; }
+.footer-col a:hover { color: var(--black); }
+.footer-bottom {
+  border-top: 1px solid var(--gray-200); padding-top: 24px;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.footer-copy { font-size: 13px; color: var(--gray-400); }
+.footer-built { font-size: 13px; color: var(--gray-400); }
+
+/* ── SCROLL ANIMATIONS ── */
+.reveal {
+  opacity: 0; transform: translateY(32px);
+  transition: all 0.7s cubic-bezier(0.4,0,0.2,1);
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+.reveal-delay-4 { transition-delay: 0.4s; }
+.reveal-delay-5 { transition-delay: 0.5s; }
+
+/* Chat animation */
+.chat-msg { opacity: 0; animation: chatIn 0.5s ease forwards; }
+.chat-msg:nth-child(1) { animation-delay: 0.3s; }
+.chat-msg:nth-child(2) { animation-delay: 1.2s; }
+.chat-msg:nth-child(3) { animation-delay: 2.2s; }
+.chat-msg:nth-child(4) { animation-delay: 3.2s; }
+@keyframes chatIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+
+/* Typing dots */
+.typing-dots { display: flex; gap: 3px; align-items: center; padding: 4px 0; }
+.typing-dots span { width: 5px; height: 5px; background: var(--gray-400); border-radius: 50%; animation: dot 1.2s ease-in-out infinite; }
+.typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+.typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes dot { 0%,80%,100%{opacity:0.3;transform:scale(0.8)} 40%{opacity:1;transform:scale(1.1)} }
+</style>
+</head>
+<body>
+
+<!-- Announcement Banner -->
+<div class="banner">
+  🚀 Now supports YouTube videos and any website URL — <a href="#">Try it free →</a>
+</div>
+
+<!-- Nav -->
+<nav>
+  <div class="nav-inner">
+    <div class="nav-logo">TalkDox 🧠</div>
+    <div class="nav-links">
+      <a href="#features">Features</a>
+      <a href="#how">How It Works</a>
+      <a href="#sources">Sources</a>
+    </div>
+    <button class="nav-cta">Get Started Free →</button>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-inner">
+    <div>
+      <div class="hero-badge">
+        <span></span>
+        Powered by Gemini 2.5 Flash
+      </div>
+      <h1 class="hero-title">
+        Chat with<br/>
+        <em>any</em> <span class="typewriter-wrap"><span id="typewriter">PDF</span></span><br/>
+        instantly.
+      </h1>
+      <p class="hero-sub">
+        Upload a PDF, paste a website URL, or drop a YouTube link. TalkDox reads it, understands it, and lets you have a full AI conversation with it — powered by Agentic RAG.
+      </p>
+      <div class="hero-actions">
+        <button class="btn-primary">Get Started Free <span>→</span></button>
+        <button class="btn-outline">▶ Watch Demo</button>
+      </div>
+      <div class="hero-social">
+        <div class="avatar-stack">
+          <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" alt="user"/>
+          <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Anita" alt="user"/>
+          <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Bob" alt="user"/>
+          <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Sara" alt="user"/>
+        </div>
+        <span>Trusted by <strong>500+</strong> students & professionals</span>
+      </div>
+    </div>
+
+    <!-- Browser Mockup -->
+    <div class="hero-visual">
+      <div class="conf-badge">
+        <div class="conf-label">AI Confidence</div>
+        <div class="conf-bar"><div class="conf-fill"></div></div>
+        <div style="font-size:11px;margin-top:4px;color:#22c55e;font-weight:600;">87% — High</div>
+      </div>
+      <div class="browser-frame">
+        <div class="browser-bar">
+          <div class="browser-dots">
+            <span class="dot-red"></span>
+            <span class="dot-yellow"></span>
+            <span class="dot-green"></span>
+          </div>
+          <div class="browser-url">🔒 talkdox.ai/chat</div>
+        </div>
+        <div class="browser-content">
+          <div class="doc-panel">
+            <div class="doc-header">
+              <div class="doc-icon">📄</div>
+              <div>
+                <div class="doc-title">research_paper.pdf</div>
+                <div class="doc-meta">24 pages · 12,840 words</div>
+              </div>
+            </div>
+            <div class="doc-lines">
+              <div class="doc-line" style="width:100%"></div>
+              <div class="doc-line" style="width:85%"></div>
+              <div class="doc-line" style="width:92%"></div>
+              <div class="doc-line" style="width:70%"></div>
+              <div class="doc-line" style="width:88%"></div>
+              <div class="doc-line" style="width:60%"></div>
+              <div class="doc-line" style="width:95%"></div>
+              <div class="doc-line" style="width:75%"></div>
+              <div class="doc-line" style="width:82%"></div>
+            </div>
+          </div>
+          <div class="chat-panel">
+            <div class="chat-msg">
+              <div class="chat-avatar ai-avatar">🧠</div>
+              <div class="chat-bubble ai">Hi! I've indexed your document. What would you like to know?</div>
+            </div>
+            <div class="chat-msg user">
+              <div class="chat-avatar">👤</div>
+              <div class="chat-bubble user-bubble">What are the main conclusions?</div>
+            </div>
+            <div class="chat-msg">
+              <div class="chat-avatar ai-avatar">🧠</div>
+              <div class="chat-bubble ai">The paper concludes that transformer-based models outperform CNNs by 23% on the benchmark dataset...</div>
+            </div>
+            <div class="chat-msg user">
+              <div class="chat-avatar">👤</div>
+              <div class="chat-bubble user-bubble">Summarize the methodology</div>
+            </div>
+            <div class="chat-input-bar">
+              <input type="text" placeholder="Ask anything about your document..." readonly/>
+              <button class="send-btn">→</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="source-badge">📄 PDF indexed · 847 chunks</div>
+    </div>
+  </div>
+</section>
+
+<!-- Character Section -->
+<section class="character-section" id="sources">
+  <p class="char-section-label reveal">Works with any source</p>
+  <h2 class="char-section-title reveal">Meet your<br/><em style="font-weight:300;">AI reading buddies</em></h2>
+  <p class="char-section-sub reveal">Three sources. One unified AI. Infinite understanding.</p>
+
+  <div class="characters-grid">
+
+    <!-- PDF Character -->
+    <div class="character-card reveal reveal-delay-1">
+      <div class="char-illustration">
+        <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Body -->
+          <circle cx="100" cy="85" r="38" fill="#fef3c7"/>
+          <!-- Hair -->
+          <ellipse cx="100" cy="52" rx="30" ry="14" fill="#1a1a1a"/>
+          <rect x="70" y="52" width="60" height="10" rx="5" fill="#1a1a1a"/>
+          <!-- Eyes -->
+          <circle cx="88" cy="82" r="5" fill="#1a1a1a"/>
+          <circle cx="112" cy="82" r="5" fill="#1a1a1a"/>
+          <circle cx="90" cy="80" r="2" fill="white"/>
+          <circle cx="114" cy="80" r="2" fill="white"/>
+          <!-- Smile -->
+          <path d="M88 96 Q100 106 112 96" stroke="#1a1a1a" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+          <!-- Cheeks -->
+          <circle cx="78" cy="92" r="7" fill="#fca5a5" opacity="0.5"/>
+          <circle cx="122" cy="92" r="7" fill="#fca5a5" opacity="0.5"/>
+          <!-- Body/Shirt -->
+          <path d="M62 135 Q62 118 100 118 Q138 118 138 135 L142 170 Q100 175 58 170 Z" fill="#ef4444"/>
+          <!-- Arms -->
+          <path d="M62 125 L42 145" stroke="#fef3c7" stroke-width="12" stroke-linecap="round"/>
+          <path d="M138 125 L158 145" stroke="#fef3c7" stroke-width="12" stroke-linecap="round"/>
+          <!-- PDF in hand -->
+          <rect x="20" y="138" width="30" height="38" rx="4" fill="white" stroke="#e5e7eb" stroke-width="1.5"/>
+          <rect x="24" y="144" width="22" height="2.5" rx="1.5" fill="#e5e7eb"/>
+          <rect x="24" y="150" width="18" height="2.5" rx="1.5" fill="#e5e7eb"/>
+          <rect x="24" y="156" width="20" height="2.5" rx="1.5" fill="#e5e7eb"/>
+          <rect x="24" y="138" width="10" height="6" rx="2" fill="#ef4444"/>
+          <text x="25" y="144" font-size="5" fill="white" font-weight="bold">PDF</text>
+          <!-- Legs -->
+          <rect x="82" y="168" width="14" height="28" rx="7" fill="#1a1a1a"/>
+          <rect x="104" y="168" width="14" height="28" rx="7" fill="#1a1a1a"/>
+          <!-- Shoes -->
+          <ellipse cx="89" cy="196" rx="12" ry="6" fill="#0a0a0a"/>
+          <ellipse cx="111" cy="196" rx="12" ry="6" fill="#0a0a0a"/>
+        </svg>
+      </div>
+      <div class="char-tag">📄 PDF</div>
+      <h3 class="char-name">Paige the PDF Reader</h3>
+      <p class="char-desc">Upload any PDF — research papers, reports, contracts, textbooks. Paige reads every word and answers your questions instantly.</p>
+    </div>
+
+    <!-- Web Character -->
+    <div class="character-card reveal reveal-delay-2" style="border-color: var(--black);">
+      <div class="char-illustration">
+        <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Body -->
+          <circle cx="100" cy="85" r="38" fill="#dbeafe"/>
+          <!-- Hair -->
+          <ellipse cx="100" cy="52" rx="28" ry="12" fill="#f59e0b"/>
+          <rect x="72" y="48" width="56" height="16" rx="8" fill="#f59e0b"/>
+          <!-- Side hair -->
+          <ellipse cx="72" cy="68" rx="8" ry="14" fill="#f59e0b"/>
+          <ellipse cx="128" cy="68" rx="8" ry="14" fill="#f59e0b"/>
+          <!-- Eyes -->
+          <circle cx="88" cy="82" r="5" fill="#1a1a1a"/>
+          <circle cx="112" cy="82" r="5" fill="#1a1a1a"/>
+          <circle cx="90" cy="80" r="2" fill="white"/>
+          <circle cx="114" cy="80" r="2" fill="white"/>
+          <!-- Stars eyes effect -->
+          <circle cx="88" cy="82" r="2" fill="white"/>
+          <circle cx="112" cy="82" r="2" fill="white"/>
+          <!-- Smile -->
+          <path d="M86 96 Q100 108 114 96" stroke="#1a1a1a" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+          <!-- Glasses -->
+          <circle cx="88" cy="82" r="9" stroke="#1a1a1a" stroke-width="2" fill="none"/>
+          <circle cx="112" cy="82" r="9" stroke="#1a1a1a" stroke-width="2" fill="none"/>
+          <line x1="97" y1="82" x2="103" y2="82" stroke="#1a1a1a" stroke-width="2"/>
+          <line x1="79" y1="82" x2="74" y2="80" stroke="#1a1a1a" stroke-width="2"/>
+          <line x1="121" y1="82" x2="126" y2="80" stroke="#1a1a1a" stroke-width="2"/>
+          <!-- Body -->
+          <path d="M62 135 Q62 118 100 118 Q138 118 138 135 L142 170 Q100 175 58 170 Z" fill="#2563eb"/>
+          <!-- Globe icon on shirt -->
+          <circle cx="100" cy="144" r="10" stroke="white" stroke-width="1.5" fill="none"/>
+          <path d="M100 134 Q106 144 100 154 Q94 144 100 134" stroke="white" stroke-width="1.5" fill="none"/>
+          <line x1="90" y1="144" x2="110" y2="144" stroke="white" stroke-width="1.5"/>
+          <!-- Arms -->
+          <path d="M62 125 L42 148" stroke="#dbeafe" stroke-width="12" stroke-linecap="round"/>
+          <path d="M138 125 L158 148" stroke="#dbeafe" stroke-width="12" stroke-linecap="round"/>
+          <!-- Laptop in hands -->
+          <rect x="140" y="142" width="32" height="22" rx="4" fill="#1a1a1a"/>
+          <rect x="142" y="144" width="28" height="16" rx="2" fill="#3b82f6"/>
+          <rect x="136" y="163" width="40" height="3" rx="1.5" fill="#1a1a1a"/>
+          <!-- URL bar on screen -->
+          <rect x="144" y="146" width="24" height="3" rx="1.5" fill="rgba(255,255,255,0.3)"/>
+          <rect x="144" y="151" width="18" height="2" rx="1" fill="rgba(255,255,255,0.2)"/>
+          <!-- Legs -->
+          <rect x="82" y="168" width="14" height="28" rx="7" fill="#1a1a1a"/>
+          <rect x="104" y="168" width="14" height="28" rx="7" fill="#1a1a1a"/>
+          <ellipse cx="89" cy="196" rx="12" ry="6" fill="#0a0a0a"/>
+          <ellipse cx="111" cy="196" rx="12" ry="6" fill="#0a0a0a"/>
+        </svg>
+      </div>
+      <div class="char-tag">🌐 Website</div>
+      <h3 class="char-name">Webb the Web Surfer</h3>
+      <p class="char-desc">Paste any URL. Webb scrapes the entire page, strips the noise, and lets you chat with the actual content — articles, docs, anything.</p>
+    </div>
+
+    <!-- YouTube Character -->
+    <div class="character-card reveal reveal-delay-3">
+      <div class="char-illustration">
+        <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Body -->
+          <circle cx="100" cy="85" r="38" fill="#fce7f3"/>
+          <!-- Hair -->
+          <ellipse cx="100" cy="54" rx="32" ry="16" fill="#7c3aed"/>
+          <rect x="68" y="56" width="64" height="12" rx="6" fill="#7c3aed"/>
+          <!-- Headphones -->
+          <path d="M68 75 Q68 50 100 50 Q132 50 132 75" stroke="#7c3aed" stroke-width="6" fill="none" stroke-linecap="round"/>
+          <rect x="60" y="72" width="14" height="18" rx="7" fill="#7c3aed"/>
+          <rect x="126" y="72" width="14" height="18" rx="7" fill="#7c3aed"/>
+          <!-- Eyes -->
+          <circle cx="88" cy="82" r="5" fill="#1a1a1a"/>
+          <circle cx="112" cy="82" r="5" fill="#1a1a1a"/>
+          <circle cx="90" cy="80" r="2" fill="white"/>
+          <circle cx="114" cy="80" r="2" fill="white"/>
+          <!-- Smile -->
+          <path d="M88 97 Q100 107 112 97" stroke="#1a1a1a" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+          <!-- Cheeks -->
+          <circle cx="78" cy="91" r="7" fill="#f9a8d4" opacity="0.6"/>
+          <circle cx="122" cy="91" r="7" fill="#f9a8d4" opacity="0.6"/>
+          <!-- Body -->
+          <path d="M62 135 Q62 118 100 118 Q138 118 138 135 L142 170 Q100 175 58 170 Z" fill="#dc2626"/>
+          <!-- YouTube play button on shirt -->
+          <rect x="88" y="134" width="24" height="18" rx="4" fill="white"/>
+          <path d="M95 139 L108 143 L95 147 Z" fill="#dc2626"/>
+          <!-- Arms -->
+          <path d="M62 125 L38 140" stroke="#fce7f3" stroke-width="12" stroke-linecap="round"/>
+          <path d="M138 125 L162 140" stroke="#fce7f3" stroke-width="12" stroke-linecap="round"/>
+          <!-- Phone with video -->
+          <rect x="22" y="130" width="22" height="32" rx="4" fill="#1a1a1a"/>
+          <rect x="24" y="133" width="18" height="22" rx="2" fill="#ef4444"/>
+          <path d="M29 140 L38 144 L29 148 Z" fill="white"/>
+          <!-- Legs -->
+          <rect x="82" y="168" width="14" height="28" rx="7" fill="#1a1a1a"/>
+          <rect x="104" y="168" width="14" height="28" rx="7" fill="#1a1a1a"/>
+          <ellipse cx="89" cy="196" rx="12" ry="6" fill="#0a0a0a"/>
+          <ellipse cx="111" cy="196" rx="12" ry="6" fill="#0a0a0a"/>
+        </svg>
+      </div>
+      <div class="char-tag">▶ YouTube</div>
+      <h3 class="char-name">Yuki the Video Nerd</h3>
+      <p class="char-desc">Drop a YouTube link. Yuki extracts the full transcript and lets you chat with the entire video — no watching required.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- Stats Bar -->
+<div class="stats-bar">
+  <div class="stats-inner">
+    <div class="reveal">
+      <div class="stat-num">3</div>
+      <div class="stat-label">Sources Supported</div>
+    </div>
+    <div class="reveal reveal-delay-1">
+      <div class="stat-num">9</div>
+      <div class="stat-label">AI Features</div>
+    </div>
+    <div class="reveal reveal-delay-2">
+      <div class="stat-num">3</div>
+      <div class="stat-label">Agentic AI Layers</div>
+    </div>
+    <div class="reveal reveal-delay-3">
+      <div class="stat-num">∞</div>
+      <div class="stat-label">Questions Answered</div>
+    </div>
+  </div>
+</div>
+
+<!-- Features -->
+<section class="features" id="features">
+  <div class="features-inner">
+    <div class="section-header reveal">
+      <div class="section-label">Everything you need</div>
+      <h2 class="section-title">Not just Q&A.<br/>A full AI layer.</h2>
+      <p class="section-sub">Precision AI built for students, researchers, and professionals.</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card reveal reveal-delay-1">
+        <div class="feat-icon">💬</div>
+        <h3 class="feat-title">Smart Q&A</h3>
+        <p class="feat-desc">Ask anything. Get precise, grounded answers from your actual content. 3 Agentic AI layers ensure accuracy.</p>
+      </div>
+      <div class="feature-card dark reveal reveal-delay-2">
+        <div class="feat-icon">🧬</div>
+        <h3 class="feat-title">Document DNA</h3>
+        <p class="feat-desc">Auto-generated fingerprint on upload — domain, tone, complexity score, key themes, and an unusual insight.</p>
+      </div>
+      <div class="feature-card reveal reveal-delay-3">
+        <div class="feat-icon">🔀</div>
+        <h3 class="feat-title">Doc vs Doc Compare</h3>
+        <p class="feat-desc">Upload two sources and compare them side by side. Dual vector retrieval. Colour-coded source attribution.</p>
+      </div>
+      <div class="feature-card reveal reveal-delay-1">
+        <div class="feat-icon">🕐</div>
+        <h3 class="feat-title">Timeline Extractor</h3>
+        <p class="feat-desc">One click extracts every date, deadline, and milestone into a colour-coded visual timeline.</p>
+      </div>
+      <div class="feature-card reveal reveal-delay-2">
+        <div class="feat-icon">🃏</div>
+        <h3 class="feat-title">Smart Flashcards</h3>
+        <p class="feat-desc">Generate study flashcards from any PDF, website, or YouTube video. Filter by difficulty level.</p>
+      </div>
+      <div class="feature-card dark reveal reveal-delay-3">
+        <div class="feat-icon">🛠</div>
+        <h3 class="feat-title">5 Automation Tools</h3>
+        <p class="feat-desc">Summary, Quiz, Email, Contradiction Finder, Action Items. One click each. Instant output.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- How It Works -->
+<section class="how" id="how">
+  <div class="how-inner">
+    <div class="section-header reveal">
+      <div class="section-label">How it works</div>
+      <h2 class="section-title">Three steps.<br/>That's it.</h2>
+    </div>
+    <div class="steps">
+      <div class="step reveal reveal-delay-1">
+        <div class="step-num">01</div>
+        <h3 class="step-title">Connect Your Source</h3>
+        <p class="step-desc">Upload a PDF, paste a website URL, or drop a YouTube link. TalkDox handles all three instantly.</p>
+      </div>
+      <div class="step reveal reveal-delay-2">
+        <div class="step-num">02</div>
+        <h3 class="step-title">AI Indexes & Understands</h3>
+        <p class="step-desc">Content is chunked, embedded via Gemini, and indexed in FAISS. Your Agentic RAG pipeline is ready.</p>
+      </div>
+      <div class="step reveal reveal-delay-3">
+        <div class="step-num">03</div>
+        <h3 class="step-title">Start Chatting</h3>
+        <p class="step-desc">Ask questions, extract timelines, generate flashcards, compare documents — all in one place.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="cta-inner">
+    <div class="cta-dots"></div>
+    <h2 class="reveal">Ready to chat with<br/>your documents?</h2>
+    <p class="reveal reveal-delay-1">Join hundreds of students and professionals saving hours every week with TalkDox.</p>
+    <div class="cta-btns reveal reveal-delay-2">
+      <button class="btn-white">Get Started Free →</button>
+      <button class="btn-ghost">View on GitHub</button>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div>
+        <div class="footer-logo">TalkDox 🧠</div>
+        <p class="footer-tagline">Intelligent document analysis — powered by Google Gemini 2.5 Flash.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Product</h4>
+        <a href="#">Features</a>
+        <a href="#">How It Works</a>
+        <a href="#">Sources</a>
+        <a href="#">Changelog</a>
+      </div>
+      <div class="footer-col">
+        <h4>Developer</h4>
+        <a href="https://github.com/Vansh150705" target="_blank">GitHub</a>
+        <a href="https://www.linkedin.com/in/vansh-mahajan-napv/" target="_blank">LinkedIn</a>
+        <a href="#">Documentation</a>
+      </div>
+      <div class="footer-col">
+        <h4>Legal</h4>
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Use</a>
+        <a href="#">Contact</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-copy">© 2026 TalkDox AI. All rights reserved.</span>
+      <span class="footer-built">Built by <strong>Vansh Mahajan</strong> · SRM Institute of Science and Technology</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+// Typewriter effect
+const words = ['PDF', 'Website', 'YouTube Video', 'Document'];
+let wordIndex = 0, charIndex = 0, deleting = false;
+const el = document.getElementById('typewriter');
+
+function type() {
+  const word = words[wordIndex];
+  if (!deleting) {
+    el.textContent = word.slice(0, charIndex + 1);
+    charIndex++;
+    if (charIndex === word.length) {
+      deleting = true;
+      setTimeout(type, 1800);
+      return;
+    }
+  } else {
+    el.textContent = word.slice(0, charIndex - 1);
+    charIndex--;
+    if (charIndex === 0) {
+      deleting = false;
+      wordIndex = (wordIndex + 1) % words.length;
+    }
+  }
+  setTimeout(type, deleting ? 60 : 100);
+}
+type();
+
+// Scroll reveal
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.12 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// Nav scroll effect
+window.addEventListener('scroll', () => {
+  const nav = document.querySelector('.nav-inner');
+  if (window.scrollY > 80) {
+    nav.style.boxShadow = '0 8px 32px rgba(0,0,0,0.12)';
+  } else {
+    nav.style.boxShadow = '0 4px 24px rgba(0,0,0,0.08)';
+  }
+});
+</script>
+</body>
+</html>
