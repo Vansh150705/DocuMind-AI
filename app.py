@@ -1,8 +1,3 @@
-"""
-app.py — DocuMind AI
-Entry point. Landing page has PDF + URL + YouTube inputs.
-"""
-
 import streamlit as st
 import time
 import re
@@ -52,10 +47,6 @@ DEFAULTS = {
 for k, v in DEFAULTS.items():
     if k not in st.session_state:
         st.session_state[k] = v
-
-# ============================================================
-# HELPERS
-# ============================================================
 
 def index_text(text, source_label):
     splitter = RecursiveCharacterTextSplitter(chunk_size=600, chunk_overlap=80)
@@ -154,10 +145,6 @@ def show_progress(ph, msg):
         <span>{msg}</span>
     </div>""", unsafe_allow_html=True)
 
-
-# ============================================================
-# HEADER
-# ============================================================
 st.markdown("""
 <div style="animation: fadeUp 0.5s ease both;">
     <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.15rem;">
@@ -175,10 +162,6 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-
-# ============================================================
-# LANDING PAGE
-# ============================================================
 if not st.session_state.processed:
 
     st.markdown("""
@@ -384,9 +367,6 @@ if not st.session_state.processed:
                         )
 
 
-# ============================================================
-# MAIN APP
-# ============================================================
 else:
     source = st.session_state.source_type
 
