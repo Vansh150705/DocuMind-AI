@@ -1,18 +1,5 @@
-"""
-utils/agents.py
-Agentic AI features:
-  1. Clarification Agent  — detects vague queries before retrieval
-  2. Self-Reflection      — reviews and improves its own answers
-  3. Confidence Adapter   — adapts response based on confidence score
-"""
-
 import re
 
-
-# ============================================================
-# AGENT 1: CLARIFICATION AGENT
-# Intercepts vague queries BEFORE retrieval (rule-based, zero LLM cost)
-# ============================================================
 
 VAGUE_PATTERNS = [
     r'^(explain|tell me|describe|what|how|why|summarize|summary|info|information|details?|more|elaborate|go on|continue|and\??)$',
@@ -44,18 +31,8 @@ def get_clarification_question(question: str) -> str:
     return "Your question seems a bit broad. Could you provide more details about what you're looking for in this document?"
 
 
-# ============================================================
-# AGENT 2: SELF-REFLECTION
-# Reviews initial answer and improves it if needed (second LLM pass)
-# ============================================================
-
 def self_reflect_and_improve(question: str, context: str, initial_answer: str, llm) -> str:
-    """
-    Sends a second prompt to the LLM asking it to review its own answer.
-    If the answer is good → returns the original.
-    If it has gaps → returns an improved version.
-    Only runs for answers longer than 20 words to save API calls.
-    """
+
     if len(initial_answer.split()) <= 20:
         return initial_answer
 
@@ -82,18 +59,8 @@ Your verdict (either 'APPROVED' or the improved answer):"""
         return initial_answer
 
 
-# ============================================================
-# AGENT 3: CONFIDENCE-BASED RESPONSE ADAPTATION
-# Appends warning or disclaimer based on confidence score
-# ============================================================
-
 def apply_confidence_adaptation(answer: str, confidence: int) -> str:
-    """
-    Modifies the answer text based on confidence level:
-      > 60  → no change (high confidence)
-      30-60 → soft disclaimer appended
-      ≤ 30  → bold warning appended
-    """
+
     if confidence > 60:
         return answer
 
@@ -112,16 +79,8 @@ def apply_confidence_adaptation(answer: str, confidence: int) -> str:
     )
 
 
-# ============================================================
-# SHARED: CONFIDENCE SCORING
-# ============================================================
-
 def get_confidence(docs, question: str) -> int:
-    """
-    Heuristic confidence score based on keyword overlap between
-    the question and the retrieved document chunks.
-    Returns an integer 0-98.
-    """
+
     if not docs:
         return 0
 

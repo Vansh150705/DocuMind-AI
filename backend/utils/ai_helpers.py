@@ -1,9 +1,3 @@
-"""
-utils/ai_helpers.py
-All LLM-related helpers: prompt building, DNA generation,
-language detection, and chat export formatting.
-"""
-
 import re
 import json
 import datetime

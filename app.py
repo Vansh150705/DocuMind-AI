@@ -15,17 +15,17 @@ from langchain_google_genai import GoogleGenerativeAIEmbeddings, ChatGoogleGener
 from youtube_transcript_api import YouTubeTranscriptApi
 
 from dotenv import load_dotenv
-from utils.styles import STYLES
-from utils.pdf_processor import extract_text_from_pdfs
-from utils.ai_helpers import generate_document_dna
+from backend.utils.styles import STYLES
+from backend.utils.pdf_processor import extract_text_from_pdfs
+from backend.utils.ai_helpers import generate_document_dna
 
-from components.tab_chat import render_chat_tab
-from components.tab_dna import render_dna_tab
-from components.tab_tools import render_tools_tab
-from components.tab_analytics import render_analytics_tab
-from components.tab_compare import render_compare_tab
-from components.tab_timeline import render_timeline_tab
-from components.tab_flashcards import render_flashcards_tab
+from backend.components.tab_chat import render_chat_tab
+from backend.components.tab_dna import render_dna_tab
+from backend.components.tab_tools import render_tools_tab
+from backend.components.tab_analytics import render_analytics_tab
+from backend.components.tab_compare import render_compare_tab
+from backend.components.tab_timeline import render_timeline_tab
+from backend.components.tab_flashcards import render_flashcards_tab
 
 load_dotenv()
 

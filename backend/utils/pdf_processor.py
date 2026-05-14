@@ -1,23 +1,9 @@
-"""
-utils/pdf_processor.py
-Handles PDF reading, text extraction, and chunking.
-"""
-
 from pypdf import PdfReader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 
 def extract_text_from_pdfs(files):
-    """
-    Reads uploaded PDF files, extracts text page by page,
-    splits into overlapping chunks, and returns metadata.
 
-    Returns:
-        all_chunks  - list of text strings
-        meta        - list of dicts with {source, page}
-        total_pages - int
-        full_text   - raw concatenated text for DNA analysis
-    """
     all_chunks, meta = [], []
     total_pages = 0
     full_text = ""
