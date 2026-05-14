@@ -13,7 +13,7 @@
 
 ## 🔗 Live Demo
 
-👉 docu-mind-ai-navy.vercel.app
+👉 https://docu-mind-ai-navy.vercel.app/
 
 ---
 
