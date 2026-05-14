@@ -13,7 +13,7 @@
 
 ## 🔗 Live Demo
 
-👉 https://docu-mind-vansh.streamlit.app/
+👉 docu-mind-ai-navy.vercel.app
 
 ---
 
