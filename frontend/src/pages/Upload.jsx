@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
+const API = import.meta.env.VITE_API_URL || ''
 
 export default function Upload() {
   const navigate = useNavigate()
@@ -29,7 +30,7 @@ export default function Upload() {
     try {
       const fd = new FormData()
       files.forEach(f => fd.append('files', f))
-      await axios.post('/api/upload/pdf', fd)
+      await axios.post(`${API}/api/upload/pdf`, fd)
       navigate('/chat')
     } catch(e) {
       setError(e.response?.data?.error || 'Upload failed.')
@@ -42,7 +43,7 @@ export default function Upload() {
     try {
       const fd = new FormData()
       fd.append('url', url)
-      await axios.post('/api/upload/web', fd)
+      await axios.post(`${API}/api/upload/web`, fd)
       navigate('/chat')
     } catch(e) {
       setError(e.response?.data?.error || 'Failed to scrape page.')
@@ -55,7 +56,7 @@ export default function Upload() {
     try {
       const fd = new FormData()
       fd.append('url', ytUrl)
-      await axios.post('/api/upload/youtube', fd)
+      await axios.post(`${API}/api/upload/youtube`, fd)
       navigate('/chat')
     } catch(e) {
       setError(e.response?.data?.error || 'Failed to fetch transcript.')

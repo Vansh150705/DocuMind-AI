@@ -2,6 +2,8 @@ import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 
+const API = import.meta.env.VITE_API_URL || ''
+
 export default function Chat() {
   const navigate = useNavigate()
   const [state, setState] = useState(null)
@@ -28,11 +30,11 @@ export default function Chat() {
   const messagesEndRef = useRef(null)
 
   useEffect(() => {
-    axios.get('/api/state').then(r => {
+    axios.get(`${API}/api/state`).then(r => {
       if (!r.data.processed) { navigate('/upload'); return }
       setState(r.data)
       setMessages(r.data.chat_history || [])
-    })
+    }).catch(() => navigate('/upload'))
   }, [])
 
   useEffect(() => {
@@ -41,7 +43,7 @@ export default function Chat() {
 
   useEffect(() => {
     if (activeTab === 'analytics') {
-      axios.get('/api/analytics').then(r => setAnalytics(r.data))
+      axios.get(`${API}/api/analytics`).then(r => setAnalytics(r.data))
     }
   }, [activeTab])
 
@@ -56,7 +58,7 @@ export default function Chat() {
       fd.append('question', question)
       fd.append('mode', mode)
       fd.append('persona', persona)
-      const r = await axios.post('/api/chat', fd)
+      const r = await axios.post(`${API}/api/chat`, fd)
       setMessages(prev => [...prev, {role:'assistant', content:r.data.answer, sources:r.data.sources, confidence:r.data.confidence}])
     } catch(e) {
       setMessages(prev => [...prev, {role:'assistant', content:'❌ Error: ' + (e.response?.data?.error || 'Something went wrong')}])
@@ -67,7 +69,7 @@ export default function Chat() {
     setToolLoading(true); setToolResult('')
     try {
       const fd = new FormData(); fd.append('tool', tool)
-      const r = await axios.post('/api/tools', fd)
+      const r = await axios.post(`${API}/api/tools`, fd)
       setToolResult(r.data.result)
     } catch(e) { setToolResult('❌ Tool failed.') }
     finally { setToolLoading(false) }
@@ -76,7 +78,7 @@ export default function Chat() {
   const extractTimeline = async () => {
     setTlLoading(true)
     try {
-      const r = await axios.post('/api/timeline')
+      const r = await axios.post(`${API}/api/timeline`)
       setTimeline(r.data.timeline)
       setTlGenerated(true)
     } catch(e) {}
@@ -87,7 +89,7 @@ export default function Chat() {
     setFcLoading(true)
     try {
       const fd = new FormData(); fd.append('count', fcCount)
-      const r = await axios.post('/api/flashcards', fd)
+      const r = await axios.post(`${API}/api/flashcards`, fd)
       setFlashcards(r.data.flashcards)
     } catch(e) {}
     finally { setFcLoading(false) }
@@ -96,7 +98,7 @@ export default function Chat() {
   const uploadCompare = async () => {
     if (!compareFile) return
     const fd = new FormData(); fd.append('files', compareFile)
-    await axios.post('/api/compare/upload', fd)
+    await axios.post(`${API}/api/compare/upload`, fd)
     setCompareLoaded(true)
   }
 
@@ -107,18 +109,22 @@ export default function Chat() {
     setCompareLoading(true)
     try {
       const fd = new FormData(); fd.append('question', q)
-      const r = await axios.post('/api/compare/chat', fd)
+      const r = await axios.post(`${API}/api/compare/chat`, fd)
       setCompareMessages(prev => [...prev, {role:'assistant',content:r.data.answer,sources_a:r.data.sources_a,sources_b:r.data.sources_b}])
     } catch(e) {}
     finally { setCompareLoading(false) }
   }
 
   const reset = async () => {
-    await axios.post('/api/reset')
+    await axios.post(`${API}/api/reset`)
     navigate('/upload')
   }
 
-  if (!state) return <div style={{display:'flex',alignItems:'center',justifyContent:'center',height:'100vh',fontFamily:'DM Sans,sans-serif',color:'#5a5a5a'}}>Loading...</div>
+  if (!state) return (
+    <div style={{display:'flex',alignItems:'center',justifyContent:'center',height:'100vh',fontFamily:'DM Sans,sans-serif',color:'#5a5a5a'}}>
+      Loading...
+    </div>
+  )
 
   const tabs = ['chat','dna','tools','analytics','compare','timeline','flashcards']
   const tabLabels = {chat:'💬 Chat',dna:'🧬 DNA',tools:'🛠 Tools',analytics:'📊 Analytics',compare:'🔀 Compare',timeline:'🕐 Timeline',flashcards:'🃏 Flashcards'}
@@ -137,8 +143,6 @@ export default function Chat() {
       {/* Sidebar */}
       <div style={{background:'#fff',borderRight:'1px solid #e2e2e2',display:'flex',flexDirection:'column',padding:'24px 16px'}}>
         <div style={{fontFamily:'Syne,sans-serif',fontWeight:800,fontSize:20,marginBottom:8,padding:'0 8px'}}>TalkDox 🧠</div>
-
-        {/* Source info */}
         <div style={{background:'#f8f8f8',border:'1px solid #e2e2e2',borderRadius:12,padding:12,marginBottom:24}}>
           <div style={{fontSize:11,fontWeight:600,textTransform:'uppercase',letterSpacing:'0.08em',color:'#a0a0a0',marginBottom:6}}>Source</div>
           <div style={{fontSize:13,fontWeight:500,color:'#0a0a0a'}}>
@@ -150,37 +154,21 @@ export default function Chat() {
             {state.doc_language && state.doc_language!=='English' && <span style={{fontSize:11,background:'#eff6ff',padding:'2px 8px',borderRadius:20,color:'#2563eb'}}>🌐 {state.doc_language}</span>}
           </div>
         </div>
-
-        {/* Nav */}
         <nav style={{flex:1}}>
           {pdfOnlyTabs.map(tab => (
-            <button key={tab} onClick={() => setActiveTab(tab)} style={{
-              width:'100%', textAlign:'left', padding:'10px 12px', borderRadius:10, border:'none',
-              background: activeTab===tab ? '#0a0a0a' : 'transparent',
-              color: activeTab===tab ? '#fff' : '#5a5a5a',
-              fontSize:14, fontWeight:500, cursor:'pointer', marginBottom:4, transition:'all 0.15s',
-              display:'flex', alignItems:'center', gap:8
-            }}>
+            <button key={tab} onClick={() => setActiveTab(tab)} style={{width:'100%',textAlign:'left',padding:'10px 12px',borderRadius:10,border:'none',background:activeTab===tab?'#0a0a0a':'transparent',color:activeTab===tab?'#fff':'#5a5a5a',fontSize:14,fontWeight:500,cursor:'pointer',marginBottom:4,transition:'all 0.15s',display:'flex',alignItems:'center',gap:8}}>
               {tabLabels[tab]}
             </button>
           ))}
         </nav>
-
-        {/* Bottom buttons */}
         <div style={{borderTop:'1px solid #e2e2e2',paddingTop:16,display:'flex',flexDirection:'column',gap:8}}>
-          <button onClick={() => navigate('/upload')} style={{background:'#f8f8f8',border:'1px solid #e2e2e2',borderRadius:10,padding:'10px 12px',fontSize:13,fontWeight:500,cursor:'pointer',color:'#5a5a5a',textAlign:'left'}}>
-            ↑ New Source
-          </button>
-          <button onClick={reset} style={{background:'#fef2f2',border:'1px solid #fca5a5',borderRadius:10,padding:'10px 12px',fontSize:13,fontWeight:500,cursor:'pointer',color:'#dc2626',textAlign:'left'}}>
-            ↺ Reset All
-          </button>
+          <button onClick={() => navigate('/upload')} style={{background:'#f8f8f8',border:'1px solid #e2e2e2',borderRadius:10,padding:'10px 12px',fontSize:13,fontWeight:500,cursor:'pointer',color:'#5a5a5a',textAlign:'left'}}>↑ New Source</button>
+          <button onClick={reset} style={{background:'#fef2f2',border:'1px solid #fca5a5',borderRadius:10,padding:'10px 12px',fontSize:13,fontWeight:500,cursor:'pointer',color:'#dc2626',textAlign:'left'}}>↺ Reset All</button>
         </div>
       </div>
 
       {/* Main */}
       <div style={{display:'flex',flexDirection:'column',overflow:'hidden'}}>
-
-        {/* Header */}
         <div style={{background:'#fff',borderBottom:'1px solid #e2e2e2',padding:'16px 24px',display:'flex',alignItems:'center',gap:16}}>
           <h2 style={{fontFamily:'Syne,sans-serif',fontSize:20,fontWeight:700,flex:1}}>{tabLabels[activeTab]}</h2>
           {activeTab==='chat' && (
@@ -203,10 +191,9 @@ export default function Chat() {
           )}
         </div>
 
-        {/* Content */}
         <div style={{flex:1,overflow:'auto',padding:24}}>
 
-          {/* ── CHAT TAB ── */}
+          {/* CHAT */}
           {activeTab==='chat' && (
             <div style={{display:'flex',flexDirection:'column',height:'100%'}}>
               <div style={{flex:1,overflow:'auto',display:'flex',flexDirection:'column',gap:16,paddingBottom:16}}>
@@ -215,9 +202,7 @@ export default function Chat() {
                     <p style={{color:'#a0a0a0',fontSize:14,marginBottom:16}}>Try asking:</p>
                     <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8}}>
                       {['What is the main topic?','Summarize the key points','What conclusions are drawn?','List the most important findings'].map(s=>(
-                        <button key={s} onClick={()=>sendMessage(s)} style={{background:'#fff',border:'1px solid #e2e2e2',borderRadius:12,padding:'12px 16px',fontSize:13,textAlign:'left',cursor:'pointer',fontFamily:'DM Sans,sans-serif',transition:'all 0.2s',color:'#374151'}}>
-                          {s}
-                        </button>
+                        <button key={s} onClick={()=>sendMessage(s)} style={{background:'#fff',border:'1px solid #e2e2e2',borderRadius:12,padding:'12px 16px',fontSize:13,textAlign:'left',cursor:'pointer',fontFamily:'DM Sans,sans-serif',transition:'all 0.2s',color:'#374151'}}>{s}</button>
                       ))}
                     </div>
                   </div>
@@ -256,20 +241,16 @@ export default function Chat() {
                 )}
                 <div ref={messagesEndRef}/>
               </div>
-
-              {/* Input */}
               <div style={{background:'#fff',border:'1.5px solid #e2e2e2',borderRadius:16,padding:'12px 16px',display:'flex',gap:12,alignItems:'center',marginTop:'auto',boxShadow:'0 1px 4px rgba(0,0,0,0.06)'}}>
                 <input value={input} onChange={e=>setInput(e.target.value)} onKeyDown={e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage()}}}
                   placeholder="Ask anything about your content..." disabled={loading}
                   style={{flex:1,border:'none',outline:'none',fontSize:15,fontFamily:'DM Sans,sans-serif',color:'#0a0a0a',background:'transparent'}}/>
-                <button onClick={()=>sendMessage()} disabled={!input.trim()||loading} style={{background:'#0a0a0a',color:'#fff',border:'none',borderRadius:10,width:36,height:36,display:'flex',alignItems:'center',justifyContent:'center',cursor:input.trim()?'pointer':'not-allowed',fontSize:16,opacity:input.trim()?1:0.4}}>
-                  →
-                </button>
+                <button onClick={()=>sendMessage()} disabled={!input.trim()||loading} style={{background:'#0a0a0a',color:'#fff',border:'none',borderRadius:10,width:36,height:36,display:'flex',alignItems:'center',justifyContent:'center',cursor:input.trim()?'pointer':'not-allowed',fontSize:16,opacity:input.trim()?1:0.4}}>→</button>
               </div>
             </div>
           )}
 
-          {/* ── DNA TAB ── */}
+          {/* DNA */}
           {activeTab==='dna' && (
             <div>
               {!state.dna ? (
@@ -319,17 +300,11 @@ export default function Chat() {
             </div>
           )}
 
-          {/* ── TOOLS TAB ── */}
+          {/* TOOLS */}
           {activeTab==='tools' && (
             <div>
               <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:12,marginBottom:24}}>
-                {[
-                  {id:'summary',icon:'📝',label:'Auto Summary'},
-                  {id:'quiz',icon:'❓',label:'Generate Quiz'},
-                  {id:'email',icon:'📧',label:'Draft Email'},
-                  {id:'contradictions',icon:'🔍',label:'Find Contradictions'},
-                  {id:'actions',icon:'📊',label:'Action Items'},
-                ].map(tool=>(
+                {[{id:'summary',icon:'📝',label:'Auto Summary'},{id:'quiz',icon:'❓',label:'Generate Quiz'},{id:'email',icon:'📧',label:'Draft Email'},{id:'contradictions',icon:'🔍',label:'Find Contradictions'},{id:'actions',icon:'📊',label:'Action Items'}].map(tool=>(
                   <button key={tool.id} onClick={()=>runTool(tool.id)} disabled={toolLoading} style={{background:'#fff',border:'1.5px solid #e2e2e2',borderRadius:14,padding:20,textAlign:'center',cursor:'pointer',transition:'all 0.2s',fontFamily:'DM Sans,sans-serif'}}>
                     <div style={{fontSize:28,marginBottom:8}}>{tool.icon}</div>
                     <div style={{fontSize:14,fontWeight:600}}>{tool.label}</div>
@@ -337,15 +312,11 @@ export default function Chat() {
                 ))}
               </div>
               {toolLoading && <div style={{textAlign:'center',color:'#a0a0a0',fontSize:14,padding:20}}>Running tool...</div>}
-              {toolResult && (
-                <div style={{background:'#fff',border:'1px solid #e2e2e2',borderRadius:16,padding:24,fontSize:14,lineHeight:1.8,color:'#374151',whiteSpace:'pre-wrap'}}>
-                  {toolResult}
-                </div>
-              )}
+              {toolResult && <div style={{background:'#fff',border:'1px solid #e2e2e2',borderRadius:16,padding:24,fontSize:14,lineHeight:1.8,color:'#374151',whiteSpace:'pre-wrap'}}>{toolResult}</div>}
             </div>
           )}
 
-          {/* ── ANALYTICS TAB ── */}
+          {/* ANALYTICS */}
           {activeTab==='analytics' && analytics && (
             <div style={{display:'flex',flexDirection:'column',gap:16}}>
               <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:16}}>
@@ -372,7 +343,7 @@ export default function Chat() {
             </div>
           )}
 
-          {/* ── COMPARE TAB ── */}
+          {/* COMPARE */}
           {activeTab==='compare' && (
             <div>
               {!compareLoaded ? (
@@ -398,9 +369,7 @@ export default function Chat() {
                     {compareMessages.length===0 && (
                       <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8}}>
                         {['What are the key differences?','What do both agree on?','Which is more comprehensive?','What is in A but missing in B?'].map(q=>(
-                          <button key={q} onClick={()=>{setCompareInput(q);setTimeout(sendCompare,100)}} style={{background:'#fff',border:'1px solid #e2e2e2',borderRadius:12,padding:'12px 16px',fontSize:13,textAlign:'left',cursor:'pointer',fontFamily:'DM Sans,sans-serif'}}>
-                            {q}
-                          </button>
+                          <button key={q} onClick={()=>{setCompareInput(q);setTimeout(sendCompare,100)}} style={{background:'#fff',border:'1px solid #e2e2e2',borderRadius:12,padding:'12px 16px',fontSize:13,textAlign:'left',cursor:'pointer',fontFamily:'DM Sans,sans-serif'}}>{q}</button>
                         ))}
                       </div>
                     )}
@@ -430,7 +399,7 @@ export default function Chat() {
             </div>
           )}
 
-          {/* ── TIMELINE TAB ── */}
+          {/* TIMELINE */}
           {activeTab==='timeline' && (
             <div>
               {!tlGenerated ? (
@@ -466,7 +435,7 @@ export default function Chat() {
             </div>
           )}
 
-          {/* ── FLASHCARDS TAB ── */}
+          {/* FLASHCARDS */}
           {activeTab==='flashcards' && (
             <div>
               <div style={{display:'flex',gap:12,marginBottom:20,alignItems:'center'}}>
@@ -476,9 +445,7 @@ export default function Chat() {
                 <button onClick={generateFlashcards} disabled={fcLoading} style={{background:'#0a0a0a',color:'#fff',border:'none',borderRadius:12,padding:'10px 24px',fontSize:14,fontWeight:600,cursor:'pointer'}}>
                   {fcLoading ? 'Generating...' : '🃏 Generate'}
                 </button>
-                {flashcards.length>0 && (
-                  <button onClick={()=>setFlashcards([])} style={{background:'#f8f8f8',border:'1px solid #e2e2e2',borderRadius:10,padding:'10px 16px',fontSize:13,cursor:'pointer'}}>↺ New Cards</button>
-                )}
+                {flashcards.length>0 && <button onClick={()=>setFlashcards([])} style={{background:'#f8f8f8',border:'1px solid #e2e2e2',borderRadius:10,padding:'10px 16px',fontSize:13,cursor:'pointer'}}>↺ New Cards</button>}
               </div>
               <div style={{display:'flex',flexDirection:'column',gap:12}}>
                 {flashcards.map((card,i)=>{
