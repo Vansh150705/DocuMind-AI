@@ -165,40 +165,79 @@ async def upload_web(url: str = Form(...)):
 @app.post("/api/upload/youtube")
 async def upload_youtube(url: str = Form(...)):
     try:
+        import yt_dlp
+        import json as jsonlib
+
         m = re.search(r"(?:v=|youtu\.be/|embed/|shorts/)([a-zA-Z0-9_-]{11})", url)
         if not m:
             return JSONResponse(status_code=400, content={"error": "Invalid YouTube URL."})
         video_id = m.group(1)
 
-        api = YouTubeTranscriptApi()
+        # Try yt-dlp to get subtitles/transcript
+        ydl_opts = {
+            'skip_download': True,
+            'writesubtitles': True,
+            'writeautomaticsub': True,
+            'subtitleslangs': ['en', 'en-US'],
+            'quiet': True,
+            'no_warnings': True,
+        }
+
+        full_text = ""
+        title = f"YouTube: {url[:50]}"
+
         try:
-            fetched = api.fetch(video_id, languages=["en", "en-US", "en-GB"])
-            segments = [{"text": s.text, "start": s.start, "duration": s.duration} for s in fetched]
-        except Exception:
-            try:
-                transcript_list = api.list(video_id)
-                available = list(transcript_list)
-                if not available:
-                    return JSONResponse(status_code=400, content={"error": "No transcripts available for this video."})
-                fetched = api.fetch(video_id, languages=[available[0].language_code])
-                segments = [{"text": s.text, "start": s.start, "duration": s.duration} for s in fetched]
-            except Exception as e2:
-                return JSONResponse(status_code=400, content={
-                    "error": "YouTube is blocking transcript requests from cloud servers. "
-                             "This is a known limitation. Try a different video or run the app locally."
-                })
+            with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+                info = ydl.extract_info(url, download=False)
+                title = info.get('title', title)
 
-        full_text = " ".join([s["text"] for s in segments])
+                # Get automatic captions
+                captions = info.get('automatic_captions', {})
+                subtitles = info.get('subtitles', {})
+
+                # Try subtitles first, then auto captions
+                caption_data = subtitles.get('en') or subtitles.get('en-US') or \
+                               captions.get('en') or captions.get('en-US') or \
+                               next(iter(captions.values()), None) or \
+                               next(iter(subtitles.values()), None)
+
+                if caption_data:
+                    # Get the json3 format which is easiest to parse
+                    json3_url = next((c['url'] for c in caption_data if c.get('ext') == 'json3'), None)
+                    if json3_url:
+                        import requests as req
+                        r = req.get(json3_url)
+                        data = r.json()
+                        events = data.get('events', [])
+                        texts = []
+                        for event in events:
+                            segs = event.get('segs', [])
+                            for seg in segs:
+                                t = seg.get('utf8', '').strip()
+                                if t and t != '\n':
+                                    texts.append(t)
+                        full_text = ' '.join(texts)
+
+                # Fallback: use description + title if no captions
+                if not full_text:
+                    description = info.get('description', '')
+                    full_text = f"Title: {title}\n\nDescription: {description}"
+
+        except Exception as e:
+            return JSONResponse(status_code=400, content={
+                "error": f"Could not fetch video info: {str(e)}"
+            })
+
+        if len(full_text.strip()) < 100:
+            return JSONResponse(status_code=400, content={
+                "error": "No transcript or captions found for this video."
+            })
+
         vs, chunk_count = index_text(full_text, f"youtube/{video_id}")
-
-        duration_sec = segments[-1].get("start", 0) + segments[-1].get("duration", 0) if segments else 0
-        m_dur = int(duration_sec) // 60
-        s_dur = int(duration_sec) % 60
-        duration = f"{m_dur}:{s_dur:02d}"
 
         store["vectorstore"]  = vs
         store["full_text"]    = full_text
-        store["pdf_names"]    = [f"YouTube: {url[:50]}"]
+        store["pdf_names"]    = [title]
         store["total_pages"]  = 1
         store["total_chunks"] = chunk_count
         store["dna"]          = None
@@ -206,7 +245,15 @@ async def upload_youtube(url: str = Form(...)):
         store["source_type"]  = "youtube"
         store["chat_history"] = []
 
-        return {"success": True, "video_id": video_id, "duration": duration, "total_chunks": chunk_count, "source_type": "youtube"}
+        return {
+            "success": True,
+            "video_id": video_id,
+            "duration": "N/A",
+            "total_chunks": chunk_count,
+            "source_type": "youtube",
+            "title": title
+        }
+
     except Exception as e:
         return JSONResponse(status_code=500, content={"error": str(e)})
 

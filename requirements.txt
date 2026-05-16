@@ -94,3 +94,4 @@ yarl==1.23.0
 zstandard==0.25.0
 beautifulsoup4
 youtube-transcript-api
+yt-dlp
