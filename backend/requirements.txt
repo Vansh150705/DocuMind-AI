@@ -12,3 +12,4 @@ google-generativeai
 youtube-transcript-api
 beautifulsoup4
 requests
+yt-dlp
