@@ -73,7 +73,7 @@ export default function Landing() {
         .typing-dots span:nth-child(3){animation-delay:0.4s}
 
         .char-card { background:#fff;border:1.5px solid #e2e2e2;border-radius:24px;padding:40px 32px;text-align:center;transition:all 0.35s cubic-bezier(0.4,0,0.2,1); }
-        .char-card:hover { transform:translateY(-8px);box-shadow:0 20px 60px rgba(0,0,0,0.1);border-color:#0a0a0a; }
+        .char-card:hover { transform:translateY(-8px);box-shadow:0 20px 60px rgba(0,0,0,0.1);border-color:#0a0a0a;border-width:2px; }
 
         .feat-card { background:#f8f8f8;border:1.5px solid #e2e2e2;border-radius:20px;padding:32px;transition:all 0.3s;cursor:default; }
         .feat-card:hover { transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,0.15);background:#0a0a0a;border-color:#0a0a0a; }
