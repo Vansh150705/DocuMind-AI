@@ -7,7 +7,7 @@ export default function Landing() {
   const typewriterRef = useRef(null)
 
   useEffect(() => {
-    const words = ['PDF', 'Website', 'YouTube Video', 'Document']
+    const words = ['PDF', 'Website', 'YouTube', 'Document']
     let wordIndex = 0, charIndex = 0, deleting = false
     const el = typewriterRef.current
     if (!el) return
@@ -85,6 +85,10 @@ export default function Landing() {
         .browser-frame { animation: float 6s ease-in-out infinite; }
         .conf-badge { animation: slideInLeft 1s ease 0.5s both; }
         .source-badge { animation: slideInLeft 1s ease 0.8s both; }
+        
+         html { overflow-x: hidden; }
+         .char-card { min-height: 420px; }
+         section { width: 100%; overflow: hidden; }
       `}</style>
 
       {/* Banner */}
@@ -118,10 +122,10 @@ export default function Landing() {
               <span style={{width:6,height:6,background:'#22c55e',borderRadius:'50%',animation:'pulse 2s infinite',display:'block'}}/>
               Powered by Gemini 2.5 Flash
             </div>
-            <h1 style={{fontFamily:'Syne,sans-serif',fontSize:68,fontWeight:800,lineHeight:1.0,letterSpacing:'-0.04em',marginBottom:20}}>
-              Chat with<br/>
-              <em style={{fontStyle:'italic',fontWeight:300}}>any</em>{' '}
-              <span ref={typewriterRef} style={{borderRight:'3px solid #0a0a0a',paddingRight:4,animation:'blink 1s step-end infinite'}}>PDF</span>
+            <h1 style={{fontFamily:'Syne,sans-serif',fontSize:60,fontWeight:800,lineHeight:1.05,letterSpacing:'-0.04em',marginBottom:20}}>
+              Chat with <em style={{fontStyle:'italic',fontWeight:300}}>any</em>
+              <br/>
+              <span ref={typewriterRef} style={{borderRight:'3px solid #0a0a0a',paddingRight:4,animation:'blink 1s step-end infinite',whiteSpace:'nowrap'}}>PDF</span>
               <br/>instantly.
             </h1>
             <p style={{fontSize:18,fontWeight:400,color:'#5a5a5a',lineHeight:1.7,marginBottom:36,maxWidth:480}}>
