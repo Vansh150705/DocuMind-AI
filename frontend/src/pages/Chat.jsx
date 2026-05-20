@@ -1206,15 +1206,6 @@ export default function Chat() {
             </div>
           </div>
 
-          {/* CHAT INPUT */}
-          {activeTab === 'chat' && (
-            <div className="input-wrap">
-              <div className="input-inner">
-                <input className="input-field" value={input} onChange={e=>setInput(e.target.value)} onKeyDown={e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage()}}} placeholder="Ask anything about your content..." disabled={loading}/>
-                <button className="send-btn" onClick={()=>sendMessage()} disabled={!input.trim()||loading}>→</button>
-              </div>
-            </div>
-          )}
 
 {/* CHAT INPUT */}
 {activeTab === 'chat' && (

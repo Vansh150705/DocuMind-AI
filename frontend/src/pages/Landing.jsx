@@ -155,10 +155,13 @@ export default function Landing() {
   transition: all 0.3s ease;
 }
 .cta-feat-card:hover {
-  background: rgba(255,255,255,0.08);
-  border-color: rgba(255,255,255,0.2);
-  transform: translateY(-3px);
+  background: #ffffff;
+  border-color: #ffffff;
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(0,0,0,0.4);
 }
+.cta-feat-card:hover .cta-feat-title { color: #0a0a0a; }
+.cta-feat-card:hover .cta-feat-desc { color: #5a5a5a; }
 .cta-feat-icon {
   font-size: 28px;
   margin-bottom: 12px;
