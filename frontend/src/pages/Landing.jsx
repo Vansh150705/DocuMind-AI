@@ -165,7 +165,6 @@ export default function Landing() {
       <a href="#features">Features</a>
       <a href="#how-it-works">How It Works</a>
       <a href="#sources">Sources</a>
-      <a href="https://github.com/Vansh150705/DocuMind-AI" target="_blank" rel="noopener noreferrer">GitHub</a>
     </div>
     <button className="nav-cta" onClick={() => navigate('/upload')}>Get Started Free →</button>
   </div>
