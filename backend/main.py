@@ -52,8 +52,8 @@ store = {
     "compare_vectorstore": None,
     "compare_name": "",
     "compare_full_text": "",
+    "dna_loading": False,
 }
-
 
 def index_text(text: str, source_label: str):
     splitter = RecursiveCharacterTextSplitter(chunk_size=600, chunk_overlap=80)
@@ -69,6 +69,7 @@ async def upload_pdf(files: list[UploadFile] = File(...)):
     try:
         import io
         from pypdf import PdfReader
+        from langchain_text_splitters import RecursiveCharacterTextSplitter
 
         all_chunks, meta = [], []
         total_pages = 0
@@ -84,7 +85,6 @@ async def upload_pdf(files: list[UploadFile] = File(...)):
                 text = page.extract_text() or ""
                 full_text += text + "\n"
                 if text.strip():
-                    from langchain_text_splitters import RecursiveCharacterTextSplitter
                     splitter = RecursiveCharacterTextSplitter(chunk_size=600, chunk_overlap=80)
                     chunks = splitter.split_text(text)
                     for chunk in chunks:
@@ -94,31 +94,45 @@ async def upload_pdf(files: list[UploadFile] = File(...)):
         embeddings = GoogleGenerativeAIEmbeddings(model="models/gemini-embedding-001")
         vs = FAISS.from_texts(all_chunks, embeddings, metadatas=meta)
 
-        llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash", temperature=0.2)
-        dna = generate_document_dna(full_text, llm)
-        doc_language = dna.get("language", "English") if dna else "English"
-
         store["vectorstore"]  = vs
         store["full_text"]    = full_text
         store["pdf_names"]    = [f.filename for f in files]
         store["total_pages"]  = total_pages
         store["total_chunks"] = len(all_chunks)
-        store["dna"]          = dna
-        store["doc_language"] = doc_language
+        store["dna"]          = None
+        store["doc_language"] = "English"
         store["source_type"]  = "pdf"
         store["chat_history"] = []
+        store["dna_loading"]  = True
+
+        # Trigger DNA generation in background — don't wait for it
+        import asyncio
+        asyncio.create_task(generate_dna_background(full_text))
 
         return {
             "success": True,
             "pdf_names": store["pdf_names"],
             "total_pages": total_pages,
             "total_chunks": len(all_chunks),
-            "dna": dna,
-            "doc_language": doc_language,
+            "dna": None,
+            "doc_language": "English",
             "source_type": "pdf"
         }
     except Exception as e:
         return JSONResponse(status_code=500, content={"error": str(e)})
+
+
+async def generate_dna_background(full_text):
+    """Runs DNA extraction in the background after upload returns."""
+    try:
+        llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash", temperature=0.2)
+        dna = generate_document_dna(full_text, llm)
+        if dna:
+            store["dna"] = dna
+            store["doc_language"] = dna.get("language", "English")
+        store["dna_loading"] = False
+    except Exception:
+        store["dna_loading"] = False
 
 
 @app.post("/api/upload/web")

@@ -843,15 +843,24 @@ export default function Chat() {
               )}
 
               {/* DNA */}
-              {activeTab==='dna' && (
-                <div>
-                  {!state.dna ? (
-                    <div className="empty-state">
-                      <div className="es-icon">🧬</div>
-                      <div className="es-title">DNA not available</div>
-                      <div className="es-sub">Document DNA only generates for PDFs. Upload a PDF to see fingerprint analysis.</div>
-                    </div>
-                  ) : (
+             {activeTab==='dna' && (
+  <div>
+    {!state.dna ? (
+      <div className="empty-state">
+        <div className="es-icon">🧬</div>
+        <div className="es-title">{state.source_type === 'pdf' ? 'Analysing your document...' : 'DNA not available'}</div>
+        <div className="es-sub">
+          {state.source_type === 'pdf'
+            ? 'Document DNA is being generated in the background. This usually takes 5-10 seconds.'
+            : 'Document DNA only generates for PDFs.'}
+        </div>
+        {state.source_type === 'pdf' && (
+          <div className="typing-indicator" style={{marginTop:20,display:'inline-flex'}}>
+            <span/><span/><span/><span className="typing-text">Generating DNA...</span>
+          </div>
+        )}
+      </div>
+    ) : (
                     <div className="dna-grid">
                       <div className="dna-card">
                         <div className="dna-title">{state.dna.title || 'Document'}</div>
