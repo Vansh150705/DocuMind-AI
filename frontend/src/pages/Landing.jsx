@@ -99,19 +99,19 @@ export default function Landing() {
       </div>
 
       {/* Nav */}
-      <nav style={{position:'fixed',top:'32px',left:0,right:0,zIndex:100,padding:'0 40px'}}>
-        <div className="nav-inner" style={{maxWidth:1200,margin:'0 auto',display:'flex',alignItems:'center',justifyContent:'space-between'}}>
-          <div style={{fontFamily:'Syne,sans-serif',fontWeight:800,fontSize:20}}>TalkDox 🧠</div>
-          <div style={{display:'flex',gap:32}}>
-            {['Features','How It Works','Sources'].map(l => (
-              <a key={l} href={`#${l.toLowerCase().replace(' ','-')}`} style={{fontSize:14,fontWeight:500,color:'#5a5a5a',textDecoration:'none'}}>{l}</a>
-            ))}
-          </div>
-          <button onClick={() => navigate('/upload')} style={{background:'#0a0a0a',color:'#fff',border:'none',borderRadius:100,padding:'10px 24px',fontSize:14,fontWeight:600,transition:'all 0.2s'}}>
-            Get Started Free →
-          </button>
-        </div>
-      </nav>
+{/* Nav */}
+<nav>
+  <div className="nav-inner">
+    <div className="nav-logo" onClick={() => window.scrollTo({top:0,behavior:'smooth'})} style={{cursor:'pointer'}}>TalkDox 🧠</div>
+    <div className="nav-links">
+      <a href="#features">Features</a>
+      <a href="#how-it-works">How It Works</a>
+      <a href="#sources">Sources</a>
+      <a href="https://github.com/Vansh150705/DocuMind-AI" target="_blank" rel="noopener noreferrer">GitHub</a>
+    </div>
+    <button className="nav-cta" onClick={() => navigate('/upload')}>Get Started Free →</button>
+  </div>
+</nav>
 
       {/* Hero */}
       <section className="dot-grid" style={{minHeight:'100vh',display:'flex',alignItems:'center',padding:'140px 40px 80px',position:'relative',overflow:'hidden'}}>
