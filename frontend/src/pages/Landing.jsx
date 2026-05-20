@@ -321,7 +321,7 @@ export default function Landing() {
             {
               tag:'🌐 Website', name:'Webb the Web Surfer',
               desc:'Paste any URL. Webb scrapes the entire page and lets you chat with the actual content — articles, docs, anything.',
-              color:'#2563eb', delay:'reveal-delay-2', border:true,
+              color:'#2563eb', delay:'reveal-delay-2',
               svg: <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" style={{width:200,height:200,margin:'0 auto 28px'}}>
                 <circle cx="100" cy="85" r="38" fill="#dbeafe"/>
                 <ellipse cx="100" cy="52" rx="28" ry="12" fill="#f59e0b"/>
@@ -370,7 +370,7 @@ export default function Landing() {
               </svg>
             }
           ].map(char => (
-            <div key={char.name} className={`char-card reveal ${char.delay}`} style={char.border?{borderColor:'#0a0a0a'}:{}}>
+            <div key={char.name} className={`char-card reveal ${char.delay}`}>
               {char.svg}
               <div style={{display:'inline-block',background:'#f0f0f0',borderRadius:100,padding:'4px 12px',fontSize:11,fontWeight:600,letterSpacing:'0.06em',textTransform:'uppercase',color:'#5a5a5a',marginBottom:12}}>{char.tag}</div>
               <h3 style={{fontFamily:'Syne,sans-serif',fontSize:26,fontWeight:800,letterSpacing:'-0.03em',marginBottom:10}}>{char.name}</h3>
