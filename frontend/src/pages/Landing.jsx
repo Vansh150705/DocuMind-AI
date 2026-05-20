@@ -428,15 +428,38 @@ export default function Landing() {
               <p style={{fontSize:14,color:'#5a5a5a',lineHeight:1.6,maxWidth:240}}>Intelligent document analysis — powered by Google Gemini 2.5 Flash.</p>
             </div>
             {[
-              {title:'Product',links:['Features','How It Works','Sources']},
-              {title:'Developer',links:['GitHub','LinkedIn','Documentation']},
-              {title:'Legal',links:['Privacy Policy','Terms of Use','Contact']},
-            ].map(col=>(
-              <div key={col.title}>
-                <h4 style={{fontSize:13,fontWeight:700,textTransform:'uppercase',letterSpacing:'0.08em',marginBottom:16,color:'#a0a0a0'}}>{col.title}</h4>
-                {col.links.map(l=><a key={l} href="#" style={{display:'block',fontSize:14,color:'#5a5a5a',textDecoration:'none',marginBottom:10}}>{l}</a>)}
-              </div>
-            ))}
+  {title:'Product',links:[
+    {name:'Features',href:'#features'},
+    {name:'How It Works',href:'#how-it-works'},
+    {name:'Sources',href:'#sources'},
+  ]},
+  {title:'Developer',links:[
+    {name:'GitHub',href:'https://github.com/Vansh150705/DocuMind-AI'},
+    {name:'LinkedIn',href:'https://www.linkedin.com/in/vansh-mahajan-napv/'},
+    {name:'Try TalkDox',href:'/upload'},
+  ]},
+  {title:'Legal',links:[
+    {name:'Privacy Policy',href:'#'},
+    {name:'Terms of Use',href:'#'},
+    {name:'Contact',href:'mailto:vansh150705@gmail.com'},
+  ]},
+].map(col=>(
+  <div key={col.title}>
+    <h4 style={{fontSize:13,fontWeight:700,textTransform:'uppercase',letterSpacing:'0.08em',marginBottom:16,color:'#a0a0a0'}}>{col.title}</h4>
+    {col.links.map(l=>(
+      <a key={l.name}
+        href={l.href}
+        target={l.href.startsWith('http') ? '_blank' : '_self'}
+        rel={l.href.startsWith('http') ? 'noopener noreferrer' : ''}
+        style={{display:'block',fontSize:14,color:'#5a5a5a',textDecoration:'none',marginBottom:10,transition:'color 0.2s',cursor:'pointer'}}
+        onMouseEnter={e=>e.target.style.color='#0a0a0a'}
+        onMouseLeave={e=>e.target.style.color='#5a5a5a'}
+      >
+        {l.name}
+      </a>
+    ))}
+  </div>
+))}
           </div>
           <div style={{borderTop:'1px solid #e2e2e2',paddingTop:24,display:'flex',justifyContent:'space-between',alignItems:'center'}}>
             <span style={{fontSize:13,color:'#a0a0a0'}}>© 2026 TalkDox AI. All rights reserved.</span>
