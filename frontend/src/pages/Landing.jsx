@@ -475,7 +475,7 @@ export default function Landing() {
 
     <div style={{borderTop:'1px solid #e2e2e2',paddingTop:24,display:'flex',justifyContent:'space-between',alignItems:'center',flexWrap:'wrap',gap:12}}>
       <span style={{fontSize:13,color:'#a0a0a0'}}>© 2026 TalkDox AI. All rights reserved.</span>
-      <span style={{fontSize:13,color:'#a0a0a0'}}>Built by <strong style={{color:'#0a0a0a'}}>Vansh Mahajan</strong> </span>
+      <span style={{fontSize:13,color:'#a0a0a0'}}>Built by <strong style={{color:'#0a0a0a'}}>Vansh Mahajan</strong></span>
     </div>
   </div>
 </footer>
