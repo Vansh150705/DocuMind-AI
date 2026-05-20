@@ -195,9 +195,11 @@ export default function Landing() {
               <button onClick={() => navigate('/upload')} style={{background:'#0a0a0a',color:'#fff',border:'none',borderRadius:100,padding:'16px 32px',fontSize:16,fontWeight:600,display:'flex',alignItems:'center',gap:8,transition:'all 0.25s'}}>
                 Get Started Free <span>→</span>
               </button>
-              <button style={{background:'transparent',color:'#0a0a0a',border:'1.5px solid #e2e2e2',borderRadius:100,padding:'16px 32px',fontSize:16,fontWeight:500,transition:'all 0.25s'}}>
-                ▶ Watch Demo
-              </button>
+<a href="https://github.com/Vansh150705/DocuMind-AI" target="_blank" rel="noopener noreferrer" style={{textDecoration:'none'}}>
+  <button style={{background:'transparent',color:'#0a0a0a',border:'1.5px solid #e2e2e2',borderRadius:100,padding:'16px 32px',fontSize:16,fontWeight:500,transition:'all 0.25s',cursor:'pointer',fontFamily:'DM Sans, sans-serif'}}>
+    ⭐ Star on GitHub
+  </button>
+</a>
             </div>
             <div style={{fontSize:13,color:'#a0a0a0',display:'flex',alignItems:'center',gap:8}}>
               <div style={{display:'flex'}}>
