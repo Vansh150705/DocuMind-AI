@@ -140,6 +140,49 @@ export default function Landing() {
         .feat-card:hover .feat-desc { color:rgba(255,255,255,0.5) !important; }
         .feat-card:hover .feat-icon-wrap { background:rgba(255,255,255,0.08) !important;border-color:rgba(255,255,255,0.1) !important; }
 
+  .cta-feature-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  position: relative;
+  z-index: 1;
+}
+.cta-feat-card {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 16px;
+  padding: 22px 20px;
+  transition: all 0.3s ease;
+}
+.cta-feat-card:hover {
+  background: rgba(255,255,255,0.08);
+  border-color: rgba(255,255,255,0.2);
+  transform: translateY(-3px);
+}
+.cta-feat-icon {
+  font-size: 28px;
+  margin-bottom: 12px;
+}
+.cta-feat-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 6px;
+  letter-spacing: -0.01em;
+}
+.cta-feat-desc {
+  font-size: 12.5px;
+  color: rgba(255,255,255,0.45);
+  line-height: 1.55;
+}
+@media (max-width: 1000px) {
+  .cta-feature-grid { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 720px) {
+  .cta-feature-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
 .step .step-num { transition: all 0.35s cubic-bezier(0.4,0,0.2,1); }
 .step:hover .step-num {
   background: #0a0a0a !important;
@@ -465,26 +508,49 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* CTA */}
-      <section style={{padding:'80px 40px',background:'#fff'}}>
-        <div style={{maxWidth:1200,margin:'0 auto',background:'#0a0a0a',borderRadius:32,padding:80,textAlign:'center',position:'relative',overflow:'hidden'}}>
-          <div style={{position:'absolute',inset:0,backgroundImage:'radial-gradient(circle, rgba(255,255,255,0.07) 1px, transparent 1px)',backgroundSize:'24px 24px'}}/>
-          <h2 className="reveal" style={{color:'#fff',fontFamily:'Syne,sans-serif',fontSize:56,fontWeight:800,letterSpacing:'-0.04em',lineHeight:1.05,marginBottom:16,position:'relative',zIndex:1}}>
-            Ready to chat with<br/>your documents?
-          </h2>
-          <p className="reveal reveal-delay-1" style={{color:'rgba(255,255,255,0.5)',fontSize:18,marginBottom:40,position:'relative',zIndex:1}}>
-            Join hundreds of students and professionals saving hours every week.
-          </p>
-          <div className="reveal reveal-delay-2" style={{display:'flex',justifyContent:'center',gap:14,position:'relative',zIndex:1}}>
-            <button onClick={() => navigate('/upload')} style={{background:'#fff',color:'#0a0a0a',border:'none',borderRadius:100,padding:'16px 36px',fontSize:16,fontWeight:600,transition:'all 0.25s'}}>
-              Get Started Free →
-            </button>
-            <button style={{background:'transparent',color:'rgba(255,255,255,0.6)',border:'1.5px solid rgba(255,255,255,0.15)',borderRadius:100,padding:'16px 36px',fontSize:16,fontWeight:500,transition:'all 0.25s'}}>
-              View on GitHub
-            </button>
-          </div>
+      {/* Feature Showcase */}
+<section style={{padding:'80px 40px',background:'#fff'}}>
+  <div style={{maxWidth:1200,margin:'0 auto',background:'#0a0a0a',borderRadius:32,padding:'80px 60px',position:'relative',overflow:'hidden'}}>
+    <div style={{position:'absolute',inset:0,backgroundImage:'radial-gradient(circle, rgba(255,255,255,0.07) 1px, transparent 1px)',backgroundSize:'24px 24px'}}/>
+    <div style={{position:'absolute',top:'-200px',right:'-200px',width:500,height:500,background:'radial-gradient(circle, rgba(99,102,241,0.15) 0%, transparent 70%)',pointerEvents:'none'}}/>
+
+    <div style={{textAlign:'center',marginBottom:60,position:'relative',zIndex:1}}>
+      <div className="reveal" style={{display:'inline-flex',alignItems:'center',gap:8,background:'rgba(255,255,255,0.08)',border:'1px solid rgba(255,255,255,0.12)',borderRadius:100,padding:'6px 14px',fontSize:11,fontWeight:600,letterSpacing:'0.1em',textTransform:'uppercase',color:'rgba(255,255,255,0.6)',marginBottom:24}}>
+        <span style={{width:6,height:6,background:'#22c55e',borderRadius:'50%',animation:'pulse 2s infinite',display:'block'}}/>
+        Everything Inside TalkDox
+      </div>
+      <h2 className="reveal" style={{color:'#fff',fontFamily:'Syne,sans-serif',fontSize:52,fontWeight:800,letterSpacing:'-0.04em',lineHeight:1.05,marginBottom:16}}>
+        Way more than<br/><em style={{fontStyle:'italic',fontWeight:300,color:'rgba(255,255,255,0.5)'}}>just a chatbot.</em>
+      </h2>
+      <p className="reveal reveal-delay-1" style={{color:'rgba(255,255,255,0.5)',fontSize:17,maxWidth:580,margin:'0 auto'}}>
+        From Agentic RAG and adaptive AI personas to timeline extraction and flashcards — TalkDox is a full AI intelligence layer for any content.
+      </p>
+    </div>
+
+    <div className="cta-feature-grid">
+      {[
+        {icon:'💬',title:'Smart Q&A',desc:'Ask anything, get answers grounded in your source'},
+        {icon:'🧬',title:'Document DNA',desc:'Auto-profile any source — domain, tone, complexity'},
+        {icon:'🔀',title:'Doc vs Doc Compare',desc:'Dual vector retrieval with colour-coded sources'},
+        {icon:'🕐',title:'Timeline Extractor',desc:'Visualise every date, deadline and milestone'},
+        {icon:'🃏',title:'Smart Flashcards',desc:'Auto-generate study cards with difficulty levels'},
+        {icon:'🛠',title:'5 Automation Tools',desc:'Summary, Quiz, Email, Contradictions, Actions'},
+        {icon:'🤖',title:'3 Agentic Layers',desc:'Clarification, Self-Reflection, Confidence'},
+        {icon:'📊',title:'Session Analytics',desc:'Track confidence trends and keyword patterns'},
+        {icon:'⚖️',title:'AI Personas',desc:'Chat as a Lawyer, Doctor, Teacher, or Analyst'},
+        {icon:'🎯',title:'Response Modes',desc:'ELI5, Executive Brief, or Devil\'s Advocate'},
+        {icon:'🌐',title:'Multilingual',desc:'Auto-detects language, responds in same one'},
+        {icon:'🎙',title:'Voice Input',desc:'Speak your questions using browser speech API'},
+      ].map((f,i) => (
+        <div key={f.title} className="cta-feat-card">
+          <div className="cta-feat-icon">{f.icon}</div>
+          <div className="cta-feat-title">{f.title}</div>
+          <div className="cta-feat-desc">{f.desc}</div>
         </div>
-      </section>
+      ))}
+    </div>
+  </div>
+</section>
 
 {/* Footer */}
 <footer style={{background:'#f8f8f8',borderTop:'1px solid #e2e2e2',padding:'60px 40px 40px'}}>
