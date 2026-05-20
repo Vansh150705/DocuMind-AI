@@ -68,6 +68,65 @@ export default function Landing() {
         .chat-msg:nth-child(3) { animation-delay: 2.2s; }
         .chat-msg:nth-child(4) { animation-delay: 3.2s; }
 
+        nav {
+  position: fixed;
+  top: 32px;
+  left: 0; right: 0;
+  z-index: 100;
+  padding: 0 40px;
+}
+.nav-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(20px);
+  border: 1px solid #e2e2e2;
+  border-radius: 100px;
+  padding: 14px 28px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  transition: all 0.3s ease;
+}
+.nav-logo {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 20px;
+  color: #0a0a0a;
+}
+.nav-links {
+  display: flex;
+  gap: 32px;
+}
+.nav-links a {
+  font-size: 14px;
+  font-weight: 500;
+  color: #5a5a5a;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.nav-links a:hover {
+  color: #0a0a0a;
+}
+.nav-cta {
+  background: #0a0a0a;
+  color: #ffffff;
+  border: none;
+  border-radius: 100px;
+  padding: 10px 24px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  transition: all 0.2s;
+  letter-spacing: -0.01em;
+}
+.nav-cta:hover {
+  background: #333;
+  transform: translateY(-1px);
+}
+
         .typing-dots span { width:5px;height:5px;background:#a0a0a0;border-radius:50%;display:inline-block;animation:dot 1.2s ease-in-out infinite; }
         .typing-dots span:nth-child(2){animation-delay:0.2s}
         .typing-dots span:nth-child(3){animation-delay:0.4s}
@@ -99,7 +158,6 @@ export default function Landing() {
       </div>
 
       {/* Nav */}
-{/* Nav */}
 <nav>
   <div className="nav-inner">
     <div className="nav-logo" onClick={() => window.scrollTo({top:0,behavior:'smooth'})} style={{cursor:'pointer'}}>TalkDox 🧠</div>
