@@ -205,59 +205,123 @@ export default function Landing() {
          .char-card { min-height: 420px; }
          section { width: 100%; overflow: hidden; }
 
-         /* ── RESPONSIVE BREAKPOINTS ── */
+/* ── RESPONSIVE BREAKPOINTS ── */
 @media (max-width: 1024px) {
-  /* Tablet */
   nav { padding: 0 20px !important; }
   .nav-inner { padding: 12px 20px !important; }
   .nav-links { gap: 20px !important; }
   .nav-links a { font-size: 13px !important; }
+}
 
-  .hero-grid { grid-template-columns: 1fr !important; gap: 40px !important; text-align: center; }
-  .hero-grid h1 { font-size: 48px !important; }
-  .hero-actions { justify-content: center !important; }
+@media (max-width: 900px) {
+  /* Tablet & below */
+  section { padding: 60px 20px !important; }
 
-  .features-grid { grid-template-columns: repeat(2, 1fr) !important; }
-  .char-grid { grid-template-columns: 1fr !important; max-width: 480px; margin: 0 auto; }
-  .steps-grid { grid-template-columns: 1fr !important; gap: 32px !important; }
+  /* Hero stacks */
+  section > div[style*="grid-template-columns: 1fr 1fr"] {
+    grid-template-columns: 1fr !important;
+    gap: 40px !important;
+    text-align: center;
+  }
+
+  /* Hero heading */
+  h1 { font-size: 44px !important; }
+
+  /* Section headings */
+  h2 { font-size: 38px !important; }
+
+  /* Browser mockup hidden on mobile */
+  .browser-frame, .conf-badge, .source-badge { display: none !important; }
+  section > div[style*="grid-template-columns: 1fr 1fr"] > div:last-child { display: none !important; }
+
+  /* Character grid: 1 column */
+  section[id="sources"] div[style*="grid-template-columns: 1fr 1fr 1fr"] {
+    grid-template-columns: 1fr !important;
+    max-width: 480px;
+    margin: 0 auto !important;
+  }
+
+  /* Features grid: 1 column */
+  section[id="features"] div[style*="grid-template-columns: repeat(3,1fr)"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Stats grid: 2 cols */
+  div[style*="grid-template-columns: repeat(4,1fr)"] {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 32px !important;
+  }
+
+  /* HOW IT WORKS — Steps stack vertically */
+  .steps-grid {
+    grid-template-columns: 1fr !important;
+    gap: 48px !important;
+  }
   .step-line { display: none !important; }
+  .step { padding: 0 !important; }
 }
 
 @media (max-width: 768px) {
-  /* Mobile */
   nav { top: 16px !important; padding: 0 12px !important; }
-  .nav-inner { padding: 10px 16px !important; border-radius: 100px !important; }
+  .nav-inner { padding: 10px 16px !important; }
   .nav-links { display: none !important; }
   .nav-cta { padding: 8px 16px !important; font-size: 13px !important; }
 
-  section { padding: 60px 20px !important; }
+  /* Hero specifics */
+  section[style*="minHeight"] { padding: 100px 20px 60px !important; }
+  section[style*="minHeight"] > div { height: auto !important; }
+  h1 { font-size: 36px !important; line-height: 1.1 !important; }
 
-  .hero-grid h1 { font-size: 36px !important; line-height: 1.1 !important; }
-  .hero-grid p { font-size: 15px !important; }
-  .hero-actions { flex-direction: column !important; width: 100%; }
-  .hero-actions button, .hero-actions a { width: 100%; }
-  .hero-actions a button { width: 100% !important; }
+  /* Hero buttons stack */
+  section[style*="minHeight"] div[style*="display:'flex',gap:14"],
+  section[style*="minHeight"] div[style*="display: flex"][style*="gap:14"] {
+    flex-direction: column !important;
+    width: 100%;
+  }
+  section[style*="minHeight"] button {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+  section[style*="minHeight"] a { width: 100% !important; }
+  section[style*="minHeight"] a button { width: 100% !important; }
 
-  .browser-mockup { display: none !important; }
+  /* Char cards */
+  .char-card { padding: 32px 24px !important; min-height: auto !important; }
 
-  .features-grid { grid-template-columns: 1fr !important; gap: 16px !important; }
+  /* Feature cards */
   .feat-card { padding: 24px !important; }
 
+  /* CTA section */
+  section > div[style*="padding:'80px 60px'"],
+  section > div[style*="padding: '80px 60px'"] {
+    padding: 50px 24px !important;
+  }
   .cta-feature-grid { grid-template-columns: 1fr !important; }
 
-  h2 { font-size: 36px !important; }
-
+  /* Footer */
   footer { padding: 40px 20px 30px !important; }
-  footer > div > div:first-child { grid-template-columns: 1fr !important; gap: 32px !important; }
-  footer > div > div:last-child { flex-direction: column !important; text-align: center; gap: 8px !important; }
+  footer > div > div:first-child {
+    grid-template-columns: 1fr !important;
+    gap: 32px !important;
+  }
+  footer > div > div:last-child {
+    flex-direction: column !important;
+    text-align: center;
+    gap: 8px !important;
+  }
 
-  .stats-bar { flex-direction: column !important; gap: 24px !important; padding: 32px 20px !important; }
+  /* Stats — single column on very small */
+  div[style*="grid-template-columns: repeat(4,1fr)"] {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
 }
 
 @media (max-width: 480px) {
-  /* Small phones */
-  .hero-grid h1 { font-size: 30px !important; }
+  h1 { font-size: 30px !important; }
+  h2 { font-size: 28px !important; }
   .nav-logo { font-size: 18px !important; }
+  .char-card { padding: 24px 16px !important; }
+  .feat-card { padding: 20px !important; }
 }
       `}</style>
 
@@ -547,8 +611,8 @@ export default function Landing() {
             <div style={{fontSize:12,fontWeight:600,letterSpacing:'0.12em',textTransform:'uppercase',color:'#a0a0a0',marginBottom:12}}>How it works</div>
             <h2 style={{fontFamily:'Syne,sans-serif',fontSize:52,fontWeight:800,letterSpacing:'-0.04em',lineHeight:1.05}}>Three steps.<br/>That's it.</h2>
           </div>
-          <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:0,position:'relative'}}>
-            <div style={{position:'absolute',top:56,left:'calc(100%/6)',right:'calc(100%/6)',height:'1.5px',background:'linear-gradient(to right, #e2e2e2, #0a0a0a, #e2e2e2)'}}/>
+         <div className="steps-grid" style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:0,position:'relative'}}>
+  <div className="step-line" style={{position:'absolute',top:56,left:'calc(100%/6)',right:'calc(100%/6)',height:'1.5px',background:'linear-gradient(to right, #e2e2e2, #0a0a0a, #e2e2e2)'}}/>
             {[
               {num:'01',title:'Connect Your Source',desc:'Upload a PDF, paste a website URL, or drop a YouTube link. TalkDox handles all three instantly.'},
               {num:'02',title:'AI Indexes & Understands',desc:'Content is chunked, embedded via Gemini, and indexed in FAISS. Your Agentic RAG pipeline is ready.'},
