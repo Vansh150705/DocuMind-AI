@@ -517,12 +517,52 @@ export default function Upload() {
         }
         .pb-dot { width: 3px; height: 3px; background: #c0c0c0; border-radius: 50%; }
 
-        @media (max-width: 980px) {
-          .up-main { grid-template-columns: 1fr; padding: 100px 24px 40px; gap: 40px; }
-          .left-side { align-items: center; text-align: center; }
-          .left-sub { max-width: 100%; }
-          .left-heading { font-size: 36px; }
-        }
+@media (max-width: 1024px) {
+  .up-main { grid-template-columns: 1fr; padding: 100px 24px 40px; gap: 40px; }
+  .left-side { align-items: center; text-align: center; }
+  .left-sub { max-width: 100%; }
+  .left-heading { font-size: 40px; }
+  .char-card-info { margin: 0 auto; }
+}
+
+@media (max-width: 768px) {
+  .up-nav { padding: 0 16px; top: 16px; }
+  .nav-back { padding: 7px 14px; font-size: 12px; }
+  .nav-logo { font-size: 18px; }
+
+  .up-main { padding: 80px 16px 40px; gap: 30px; }
+  .left-heading { font-size: 32px; }
+  .left-sub { font-size: 14px; }
+  .badge { font-size: 10px; padding: 5px 12px; }
+
+  .char-wrap { width: 160px; }
+  .char-card-info { padding: 14px 16px; }
+
+  .up-card { padding: 24px; border-radius: 20px; }
+  .section-title { font-size: 18px; }
+  .section-sub { font-size: 13px; margin-bottom: 16px; }
+
+  .tab-btn { font-size: 12px; padding: 9px 4px; }
+  .tab-btn .tab-emoji { font-size: 16px; }
+  .tab-btn .tab-sub { font-size: 8px; }
+
+  .drop-zone { padding: 22px 16px; }
+  .drop-emoji { font-size: 30px; }
+
+  .submit-btn { padding: 14px; font-size: 14px; }
+
+  .progress-section { padding: 18px; }
+  .progress-label { font-size: 12px; }
+
+  .step-row { font-size: 12px; }
+  .step-dot { width: 22px; height: 22px; font-size: 11px; }
+}
+
+@media (max-width: 480px) {
+  .left-heading { font-size: 26px; }
+  .char-wrap { width: 140px; }
+  .up-card { padding: 20px; }
+}
       `}</style>
 
       <div className="up-shell">

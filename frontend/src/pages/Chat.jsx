@@ -29,6 +29,7 @@ export default function Chat() {
   const [compareLoading, setCompareLoading] = useState(false)
   const [analytics, setAnalytics] = useState(null)
   const [listening, setListening] = useState(false)
+  const [sidebarOpen, setSidebarOpen] = useState(false)
   const messagesEndRef = useRef(null)
   const recognitionRef = useRef(null)
 
@@ -792,17 +793,98 @@ recognition.onresult = (event) => {
         }
         .es-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.15); }
 
-        @media (max-width: 880px) {
-          .chat-shell { grid-template-columns: 1fr; }
-          .sidebar { display: none; }
-        }
+@media (max-width: 1024px) {
+  .chat-shell { grid-template-columns: 240px 1fr; }
+  .top-title { font-size: 18px; }
+  .content-area { padding: 20px; }
+}
+
+@media (max-width: 768px) {
+  .chat-shell { grid-template-columns: 1fr; }
+  .sidebar {
+    position: fixed;
+    left: 0; top: 0; bottom: 0;
+    width: 280px;
+    z-index: 100;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    box-shadow: 4px 0 20px rgba(0,0,0,0.1);
+  }
+  .sidebar.open { transform: translateX(0); }
+
+  .top-bar { padding: 12px 16px; gap: 8px; flex-wrap: wrap; }
+  .top-title { font-size: 16px; }
+  .top-title em { display: none; }
+  .top-select { padding: 6px 10px; font-size: 11px; }
+
+  .content-area { padding: 16px; }
+
+  .msg-bubble { max-width: 90% !important; padding: 11px 14px; font-size: 14px; }
+  .msg-meta { max-width: 90%; }
+
+  .sug-grid { grid-template-columns: 1fr !important; }
+  .sug-card { padding: 12px 14px; font-size: 13px; }
+
+  .empty-title { font-size: 20px; }
+  .empty-sub { font-size: 13px; }
+  .empty-emoji { font-size: 40px; }
+
+  .input-wrap { padding: 12px 16px 16px; }
+  .input-inner { padding: 4px 4px 4px 14px; }
+  .input-field { font-size: 14px; padding: 12px 0; }
+  .send-btn, .mic-btn { width: 36px; height: 36px; }
+
+  .tools-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 8px; }
+  .tool-card { padding: 18px 12px; }
+  .tool-icon { font-size: 24px; }
+  .tool-label { font-size: 12px; }
+
+  .stats-grid { grid-template-columns: 1fr !important; }
+  .stat-num { font-size: 36px; }
+
+  .dna-grid-2 { grid-template-columns: 1fr !important; }
+  .dna-title { font-size: 18px; }
+  .dna-summary { font-size: 14px; }
+  .dna-card { padding: 18px; }
+
+  .cmp-tags { flex-wrap: wrap; }
+
+  .fc-question { font-size: 14px; }
+  .fc-card { padding: 14px 18px; }
+}
+
+/* Mobile menu toggle button */
+.mobile-menu-btn {
+  display: none;
+  background: #fff;
+  border: 1px solid #e2e2e2;
+  border-radius: 10px;
+  width: 36px; height: 36px;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+@media (max-width: 768px) {
+  .mobile-menu-btn { display: flex; }
+}
+
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  z-index: 99;
+}
+.sidebar-overlay.open { display: block; }
       `}</style>
 
       <div className="chat-shell">
         <div className="chat-bg" />
 
         {/* SIDEBAR */}
-        <aside className="sidebar">
+        <aside className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
           <div className="sidebar-logo">TalkDox 🧠</div>
 
           <div className="source-card">
@@ -819,7 +901,7 @@ recognition.onresult = (event) => {
           <div className="nav-section-label">Workspace</div>
           <nav className="nav-list">
             {availableTabs.map(tab => (
-              <button key={tab} onClick={() => setActiveTab(tab)} className={`nav-btn ${activeTab===tab?'active':''}`}>
+              <button key={tab} onClick={() => { setActiveTab(tab); setSidebarOpen(false) }} className={`nav-btn ${activeTab===tab?'active':''}`}>
                 <span className="nav-btn-icon">{tabIcons[tab]}</span>
                 {tabNames[tab]}
               </button>
@@ -839,7 +921,8 @@ recognition.onresult = (event) => {
         {/* MAIN */}
         <main className="main-area">
           <div className="top-bar">
-            <h1 className="top-title">
+  <button className="mobile-menu-btn" onClick={() => setSidebarOpen(!sidebarOpen)}>☰</button>
+  <h1 className="top-title">
               {tabIcons[activeTab]} {tabNames[activeTab]}
               {activeTab==='chat' && <em>{messages.length} messages</em>}
             </h1>
@@ -1225,6 +1308,7 @@ recognition.onresult = (event) => {
 )}
 
         </main>
+         <div className={`sidebar-overlay ${sidebarOpen ? 'open' : ''}`} onClick={() => setSidebarOpen(false)} />
       </div>
     </>
   )

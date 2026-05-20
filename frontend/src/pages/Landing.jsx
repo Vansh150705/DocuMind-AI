@@ -204,6 +204,61 @@ export default function Landing() {
          html { overflow-x: hidden; }
          .char-card { min-height: 420px; }
          section { width: 100%; overflow: hidden; }
+
+         /* ── RESPONSIVE BREAKPOINTS ── */
+@media (max-width: 1024px) {
+  /* Tablet */
+  nav { padding: 0 20px !important; }
+  .nav-inner { padding: 12px 20px !important; }
+  .nav-links { gap: 20px !important; }
+  .nav-links a { font-size: 13px !important; }
+
+  .hero-grid { grid-template-columns: 1fr !important; gap: 40px !important; text-align: center; }
+  .hero-grid h1 { font-size: 48px !important; }
+  .hero-actions { justify-content: center !important; }
+
+  .features-grid { grid-template-columns: repeat(2, 1fr) !important; }
+  .char-grid { grid-template-columns: 1fr !important; max-width: 480px; margin: 0 auto; }
+  .steps-grid { grid-template-columns: 1fr !important; gap: 32px !important; }
+  .step-line { display: none !important; }
+}
+
+@media (max-width: 768px) {
+  /* Mobile */
+  nav { top: 16px !important; padding: 0 12px !important; }
+  .nav-inner { padding: 10px 16px !important; border-radius: 100px !important; }
+  .nav-links { display: none !important; }
+  .nav-cta { padding: 8px 16px !important; font-size: 13px !important; }
+
+  section { padding: 60px 20px !important; }
+
+  .hero-grid h1 { font-size: 36px !important; line-height: 1.1 !important; }
+  .hero-grid p { font-size: 15px !important; }
+  .hero-actions { flex-direction: column !important; width: 100%; }
+  .hero-actions button, .hero-actions a { width: 100%; }
+  .hero-actions a button { width: 100% !important; }
+
+  .browser-mockup { display: none !important; }
+
+  .features-grid { grid-template-columns: 1fr !important; gap: 16px !important; }
+  .feat-card { padding: 24px !important; }
+
+  .cta-feature-grid { grid-template-columns: 1fr !important; }
+
+  h2 { font-size: 36px !important; }
+
+  footer { padding: 40px 20px 30px !important; }
+  footer > div > div:first-child { grid-template-columns: 1fr !important; gap: 32px !important; }
+  footer > div > div:last-child { flex-direction: column !important; text-align: center; gap: 8px !important; }
+
+  .stats-bar { flex-direction: column !important; gap: 24px !important; padding: 32px 20px !important; }
+}
+
+@media (max-width: 480px) {
+  /* Small phones */
+  .hero-grid h1 { font-size: 30px !important; }
+  .nav-logo { font-size: 18px !important; }
+}
       `}</style>
 
       {/* Banner */}
