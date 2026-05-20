@@ -38,7 +38,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# In-memory store (one session for now)
 store = {
     "vectorstore": None,
     "full_text": "",
@@ -105,7 +104,6 @@ async def upload_pdf(files: list[UploadFile] = File(...)):
         store["chat_history"] = []
         store["dna_loading"]  = True
 
-        # Trigger DNA generation in background — don't wait for it
         import asyncio
         asyncio.create_task(generate_dna_background(full_text))
 
@@ -123,7 +121,6 @@ async def upload_pdf(files: list[UploadFile] = File(...)):
 
 
 async def generate_dna_background(full_text):
-    """Runs DNA extraction in the background after upload returns."""
     try:
         llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash", temperature=0.2)
         dna = generate_document_dna(full_text, llm)
@@ -179,79 +176,52 @@ async def upload_web(url: str = Form(...)):
 @app.post("/api/upload/youtube")
 async def upload_youtube(url: str = Form(...)):
     try:
-        import yt_dlp
-        import json as jsonlib
+        import httpx
+        import os
 
         m = re.search(r"(?:v=|youtu\.be/|embed/|shorts/)([a-zA-Z0-9_-]{11})", url)
         if not m:
             return JSONResponse(status_code=400, content={"error": "Invalid YouTube URL."})
         video_id = m.group(1)
 
-        # Try yt-dlp to get subtitles/transcript
-        ydl_opts = {
-            'skip_download': True,
-            'writesubtitles': True,
-            'writeautomaticsub': True,
-            'subtitleslangs': ['en', 'en-US'],
-            'quiet': True,
-            'no_warnings': True,
-        }
-
-        full_text = ""
-        title = f"YouTube: {url[:50]}"
-
-        try:
-            with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-                info = ydl.extract_info(url, download=False)
-                title = info.get('title', title)
-
-                # Get automatic captions
-                captions = info.get('automatic_captions', {})
-                subtitles = info.get('subtitles', {})
-
-                # Try subtitles first, then auto captions
-                caption_data = subtitles.get('en') or subtitles.get('en-US') or \
-                               captions.get('en') or captions.get('en-US') or \
-                               next(iter(captions.values()), None) or \
-                               next(iter(subtitles.values()), None)
-
-                if caption_data:
-                    # Get the json3 format which is easiest to parse
-                    json3_url = next((c['url'] for c in caption_data if c.get('ext') == 'json3'), None)
-                    if json3_url:
-                        import requests as req
-                        r = req.get(json3_url)
-                        data = r.json()
-                        events = data.get('events', [])
-                        texts = []
-                        for event in events:
-                            segs = event.get('segs', [])
-                            for seg in segs:
-                                t = seg.get('utf8', '').strip()
-                                if t and t != '\n':
-                                    texts.append(t)
-                        full_text = ' '.join(texts)
-
-                # Fallback: use description + title if no captions
-                if not full_text:
-                    description = info.get('description', '')
-                    full_text = f"Title: {title}\n\nDescription: {description}"
-
-        except Exception as e:
-            return JSONResponse(status_code=400, content={
-                "error": f"Could not fetch video info: {str(e)}"
+        api_key = os.getenv("SUPADATA_API_KEY")
+        if not api_key:
+            return JSONResponse(status_code=500, content={
+                "error": "Supadata API key not configured on server."
             })
 
-        if len(full_text.strip()) < 100:
+        async with httpx.AsyncClient(timeout=30) as client:
+            r = await client.get(
+                "https://api.supadata.ai/v1/youtube/transcript",
+                params={"videoId": video_id, "text": "true"},
+                headers={"x-api-key": api_key}
+            )
+
+        if r.status_code != 200:
             return JSONResponse(status_code=400, content={
-                "error": "No transcript or captions found for this video."
+                "error": f"Could not fetch transcript (status {r.status_code}). The video may not have captions."
+            })
+
+        data = r.json()
+
+        full_text = ""
+        if isinstance(data.get("content"), str):
+            full_text = data["content"]
+        elif isinstance(data.get("content"), list):
+            full_text = " ".join([item.get("text", "") for item in data["content"]])
+        elif isinstance(data.get("transcript"), list):
+            full_text = " ".join([item.get("text", "") for item in data["transcript"]])
+
+        if not full_text or len(full_text.strip()) < 100:
+            return JSONResponse(status_code=400, content={
+                "error": "No transcript found for this video."
             })
 
         vs, chunk_count = index_text(full_text, f"youtube/{video_id}")
 
         store["vectorstore"]  = vs
         store["full_text"]    = full_text
-        store["pdf_names"]    = [title]
+        store["pdf_names"]    = [f"YouTube: {url[:50]}"]
         store["total_pages"]  = 1
         store["total_chunks"] = chunk_count
         store["dna"]          = None
@@ -264,8 +234,7 @@ async def upload_youtube(url: str = Form(...)):
             "video_id": video_id,
             "duration": "N/A",
             "total_chunks": chunk_count,
-            "source_type": "youtube",
-            "title": title
+            "source_type": "youtube"
         }
 
     except Exception as e:
