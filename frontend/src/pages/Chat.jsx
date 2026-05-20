@@ -87,10 +87,10 @@ export default function Chat() {
 
     recognition.onstart = () => setListening(true)
 
-    recognition.onresult = (event) => {
-      const transcript = event.results[0][0].transcript
-      setInput(prev => prev ? `${prev} ${transcript}` : transcript)
-    }
+recognition.onresult = (event) => {
+  const transcript = event.results[event.results.length - 1][0].transcript
+  setInput(transcript)
+}
 
     recognition.onerror = (event) => {
       console.error('Speech error:', event.error)
