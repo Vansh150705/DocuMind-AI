@@ -833,12 +833,18 @@ export default function Chat() {
                       )}
                     </div>
                   ))}
-                  {loading && (
-                    <div className="msg-wrap">
-                      <div className="typing-indicator"><span/><span/><span/><span className="typing-text">Thinking...</span></div>
-                    </div>
-                  )}
-                  <div ref={messagesEndRef}/>
+{loading && (
+  <div className="msg-wrap">
+    <div style={{display:'inline-flex',alignItems:'center',gap:12,padding:'14px 22px',background:'#fff',border:'1px solid #e2e2e2',borderRadius:'20px 20px 20px 4px',boxShadow:'0 2px 10px rgba(0,0,0,0.05)'}}>
+      <div style={{display:'inline-flex',gap:5}}>
+        <span style={{width:7,height:7,background:'#c0c0c0',borderRadius:'50%',display:'block',animation:'tdot 1.3s ease-in-out infinite'}}/>
+        <span style={{width:7,height:7,background:'#c0c0c0',borderRadius:'50%',display:'block',animation:'tdot 1.3s ease-in-out 0.15s infinite'}}/>
+        <span style={{width:7,height:7,background:'#c0c0c0',borderRadius:'50%',display:'block',animation:'tdot 1.3s ease-in-out 0.3s infinite'}}/>
+      </div>
+      <span style={{fontSize:13,color:'#5a5a5a',fontWeight:500,whiteSpace:'nowrap',fontStyle:'italic'}}>Thinking...</span>
+    </div>
+  </div>
+)}                  <div ref={messagesEndRef}/>
                 </div>
               )}
 
@@ -918,13 +924,18 @@ export default function Chat() {
                       </button>
                     ))}
                   </div>
-                  {toolLoading && (
-                    <div style={{textAlign:'center',padding:30}}>
-                      <div className="typing-indicator" style={{display:'inline-flex'}}>
-                        <span/><span/><span/><span className="typing-text">Running tool...</span>
-                      </div>
-                    </div>
-                  )}
+   {toolLoading && (
+  <div style={{textAlign:'center',padding:30}}>
+    <div style={{display:'inline-flex',alignItems:'center',gap:12,padding:'14px 24px',background:'#fff',border:'1px solid #e2e2e2',borderRadius:14,boxShadow:'0 2px 10px rgba(0,0,0,0.05)'}}>
+      <div style={{display:'inline-flex',gap:5}}>
+        <span style={{width:7,height:7,background:'#c0c0c0',borderRadius:'50%',display:'block',animation:'tdot 1.3s ease-in-out infinite'}}/>
+        <span style={{width:7,height:7,background:'#c0c0c0',borderRadius:'50%',display:'block',animation:'tdot 1.3s ease-in-out 0.15s infinite'}}/>
+        <span style={{width:7,height:7,background:'#c0c0c0',borderRadius:'50%',display:'block',animation:'tdot 1.3s ease-in-out 0.3s infinite'}}/>
+      </div>
+      <span style={{fontSize:13,color:'#5a5a5a',fontWeight:500,whiteSpace:'nowrap'}}>Running tool...</span>
+    </div>
+  </div>
+)}
                   {toolResult && <div className="tool-result">{toolResult}</div>}
                 </div>
               )}
@@ -1009,7 +1020,18 @@ export default function Chat() {
                             )}
                           </div>
                         ))}
-                        {compareLoading && <div className="msg-wrap"><div className="typing-indicator"><span/><span/><span/><span className="typing-text">Comparing...</span></div></div>}
+                        {compareLoading && (
+                          <div className="msg-wrap">
+                            <div style={{display:'inline-flex',alignItems:'center',gap:12,padding:'14px 22px',background:'#fff',border:'1px solid #e2e2e2',borderRadius:'20px 20px 20px 4px',boxShadow:'0 2px 10px rgba(0,0,0,0.05)'}}>
+                              <div style={{display:'inline-flex',gap:5}}>
+                                <span style={{width:7,height:7,background:'#c0c0c0',borderRadius:'50%',display:'block',animation:'tdot 1.3s ease-in-out infinite'}}/>
+                                <span style={{width:7,height:7,background:'#c0c0c0',borderRadius:'50%',display:'block',animation:'tdot 1.3s ease-in-out 0.15s infinite'}}/>
+                                <span style={{width:7,height:7,background:'#c0c0c0',borderRadius:'50%',display:'block',animation:'tdot 1.3s ease-in-out 0.3s infinite'}}/>
+                              </div>
+                              <span style={{fontSize:13,color:'#5a5a5a',fontWeight:500,whiteSpace:'nowrap'}}>Comparing...</span>
+                            </div>
+                          </div>
+                        )}
                       </div>
                     </div>
                   )}
