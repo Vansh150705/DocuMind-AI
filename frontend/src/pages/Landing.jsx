@@ -419,7 +419,7 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* Footer */}
+{/* Footer */}
 <footer style={{background:'#f8f8f8',borderTop:'1px solid #e2e2e2',padding:'60px 40px 40px'}}>
   <div style={{maxWidth:1200,margin:'0 auto'}}>
     <div style={{display:'grid',gridTemplateColumns:'2fr 1fr 1fr',gap:40,marginBottom:48}}>
@@ -457,11 +457,8 @@ export default function Landing() {
         {[
           {name:'GitHub',href:'https://github.com/Vansh150705/DocuMind-AI'},
           {name:'LinkedIn',href:'https://www.linkedin.com/in/vansh-mahajan-napv/'},
-          {name:'Email',href:'mailto:vansh150705@gmail.com'},
         ].map(l=>(
-          <a key={l.name} href={l.href}
-            target={l.href.startsWith('http') ? '_blank' : '_self'}
-            rel={l.href.startsWith('http') ? 'noopener noreferrer' : ''}
+          <a key={l.name} href={l.href} target="_blank" rel="noopener noreferrer"
             style={{display:'block',fontSize:14,color:'#5a5a5a',textDecoration:'none',marginBottom:10,transition:'color 0.2s',cursor:'pointer'}}
             onMouseEnter={e=>e.target.style.color='#0a0a0a'}
             onMouseLeave={e=>e.target.style.color='#5a5a5a'}
@@ -469,12 +466,16 @@ export default function Landing() {
             {l.name}
           </a>
         ))}
+        <div style={{marginTop:14,paddingTop:14,borderTop:'1px solid #e2e2e2'}}>
+          <div style={{fontSize:11,color:'#a0a0a0',marginBottom:4,fontWeight:600,letterSpacing:'0.05em',textTransform:'uppercase'}}>Reach out</div>
+          <div style={{fontSize:13,color:'#0a0a0a',fontWeight:600}}>vansh150705@gmail.com</div>
+        </div>
       </div>
     </div>
 
     <div style={{borderTop:'1px solid #e2e2e2',paddingTop:24,display:'flex',justifyContent:'space-between',alignItems:'center',flexWrap:'wrap',gap:12}}>
       <span style={{fontSize:13,color:'#a0a0a0'}}>© 2026 TalkDox AI. All rights reserved.</span>
-      <span style={{fontSize:13,color:'#a0a0a0'}}>Built by <strong style={{color:'#0a0a0a'}}>Vansh Mahajan</strong></span>
+      <span style={{fontSize:13,color:'#a0a0a0'}}>Built by <strong style={{color:'#0a0a0a'}}>Vansh Mahajan</strong> · <span style={{color:'#0a0a0a',fontWeight:500}}>vansh150705@gmail.com</span></span>
     </div>
   </div>
 </footer>
