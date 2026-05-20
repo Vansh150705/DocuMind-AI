@@ -199,43 +199,77 @@ export default function Landing() {
          .char-card { min-height: 420px; }
          section { width: 100%; overflow: hidden; }
 
+/* ── GLOBAL RESET ── */
+html, body {
+  overflow-x: hidden !important;
+  max-width: 100% !important;
+}
+* { max-width: 100vw; }
+
 /* ── RESPONSIVE BREAKPOINTS ── */
 @media (max-width: 768px) {
-  /* ── NAV ── */
+  /* NAV */
   nav { top: 16px !important; padding: 0 12px !important; }
-  .nav-inner { padding: 10px 16px !important; }
+  .nav-inner { padding: 8px 14px !important; }
   .nav-links { display: none !important; }
-  .nav-logo { font-size: 16px !important; }
-  .nav-cta { padding: 8px 14px !important; font-size: 12px !important; }
+  .nav-logo { font-size: 15px !important; }
+  .nav-cta { padding: 7px 12px !important; font-size: 11px !important; }
 
-  /* ── HERO ── */
+  /* BANNER */
+  body > div:first-child { font-size: 11px !important; padding: 8px 14px !important; }
+
+  /* HERO SECTION */
   section[style*="minHeight"] {
-    padding: 100px 20px 60px !important;
+    padding: 100px 20px 40px !important;
     min-height: auto !important;
   }
-  section[style*="minHeight"] > div[style*="gridTemplateColumns"],
   section[style*="minHeight"] > div {
-    grid-template-columns: 1fr !important;
-    gap: 32px !important;
-  }
-  section[style*="minHeight"] h1 {
-    font-size: 36px !important;
-    line-height: 1.1 !important;
-  }
-  section[style*="minHeight"] p {
-    font-size: 14px !important;
-    line-height: 1.55 !important;
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
   }
 
   section[style*="minHeight"] > div > div:nth-child(2) {
     display: none !important;
   }
 
-  /* Hero buttons row */
-  section[style*="minHeight"] div[style*="gap:14"] {
+  /* Hero left column */
+  section[style*="minHeight"] > div > div:first-child {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  /* HERO HEADING */
+  section[style*="minHeight"] h1 {
+    font-size: 38px !important;
+    line-height: 1.05 !important;
+    word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
+  }
+
+  /* Hero typewriter span — allow wrap */
+  section[style*="minHeight"] h1 span {
+    white-space: normal !important;
+  }
+
+  /* Hero paragraph */
+  section[style*="minHeight"] p {
+    font-size: 15px !important;
+    line-height: 1.55 !important;
+    max-width: 100% !important;
+  }
+
+  /* HERO BUTTONS */
+  section[style*="minHeight"] div[style*="gap:14"],
+  section[style*="minHeight"] div[style*="gap: 14"] {
     flex-direction: column !important;
     width: 100% !important;
     gap: 10px !important;
+    margin-bottom: 28px !important;
+  }
+  section[style*="minHeight"] div[style*="gap:14"] > button,
+  section[style*="minHeight"] div[style*="gap:14"] > a {
+    width: 100% !important;
   }
   section[style*="minHeight"] div[style*="gap:14"] button {
     width: 100% !important;
@@ -243,11 +277,13 @@ export default function Landing() {
     padding: 14px !important;
     font-size: 14px !important;
   }
-  section[style*="minHeight"] div[style*="gap:14"] a {
-    width: 100% !important;
-  }
   section[style*="minHeight"] div[style*="gap:14"] a button {
     width: 100% !important;
+  }
+
+  section[style*="minHeight"] div[style*="fontSize:13"] {
+    font-size: 12px !important;
+    flex-wrap: wrap !important;
   }
 
   /* ── CHARACTERS ── */
@@ -314,18 +350,15 @@ export default function Landing() {
     text-align: center !important;
     gap: 8px !important;
   }
-
-  /* ── BANNER ── */
-  div[style*="background:'#0a0a0a'"][style*="textAlign:'center'"] {
-    font-size: 11px !important;
-    padding: 8px 16px !important;
-  }
 }
 
 @media (max-width: 480px) {
-  section[style*="minHeight"] h1 { font-size: 30px !important; }
+  section[style*="minHeight"] h1 {
+    font-size: 32px !important;
+  }
   h2 { font-size: 28px !important; }
-  .nav-logo { font-size: 15px !important; }
+  .nav-logo { font-size: 14px !important; }
+  .nav-cta { font-size: 10px !important; padding: 6px 10px !important; }
   .char-card { padding: 24px 16px !important; }
 }
       `}</style>
