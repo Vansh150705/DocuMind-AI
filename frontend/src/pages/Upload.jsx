@@ -617,10 +617,26 @@ export default function Upload() {
                 </div>
               )}
 
-              {activeTab === 'youtube' && !loading && (
-                <div>
-                  <div className="section-title">Paste YouTube Link</div>
-                  <div className="section-sub">Lectures, tutorials, interviews — any video with captions.</div>
+{activeTab === 'youtube' && !loading && (
+  <div>
+    <div className="section-title">Paste YouTube Link</div>
+    <div className="section-sub">Lectures, tutorials, interviews — any video with captions.</div>
+    <div style={{
+      background:'#fffbea',
+      border:'1px solid #fde68a',
+      borderRadius:10,
+      padding:'10px 14px',
+      fontSize:12,
+      color:'#92400e',
+      lineHeight:1.55,
+      marginBottom:14,
+      display:'flex',
+      alignItems:'flex-start',
+      gap:8
+    }}>
+      <span style={{fontSize:14,flexShrink:0}}>💡</span>
+      <span><strong>Tip:</strong> Some videos may not work due to region restrictions, age limits, or disabled captions. If you hit an error, try a different video.</span>
+    </div>
                   <input
                     className="url-input"
                     value={ytUrl}

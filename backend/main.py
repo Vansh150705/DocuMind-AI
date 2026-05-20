@@ -181,13 +181,13 @@ async def upload_youtube(url: str = Form(...)):
 
         m = re.search(r"(?:v=|youtu\.be/|embed/|shorts/)([a-zA-Z0-9_-]{11})", url)
         if not m:
-            return JSONResponse(status_code=400, content={"error": "Invalid YouTube URL."})
+            return JSONResponse(status_code=400, content={"error": "That doesn't look like a valid YouTube URL. Please paste the full video link."})
         video_id = m.group(1)
 
         api_key = os.getenv("SUPADATA_API_KEY")
         if not api_key:
             return JSONResponse(status_code=500, content={
-                "error": "Supadata API key not configured on server."
+                "error": "Server configuration issue. Please contact support."
             })
 
         async with httpx.AsyncClient(timeout=30) as client:
@@ -198,9 +198,33 @@ async def upload_youtube(url: str = Form(...)):
             )
 
         if r.status_code != 200:
-            return JSONResponse(status_code=400, content={
-                "error": f"Could not fetch transcript (status {r.status_code}). The video may not have captions."
-            })
+            raw_error = ""
+            try:
+                error_data = r.json()
+                raw_error = (error_data.get("message", "") or error_data.get("error", "") or "").lower()
+            except:
+                raw_error = r.text.lower()
+
+            if "region" in raw_error or "geographical" in raw_error or "not available in your" in raw_error:
+                friendly = "This video is region-locked and can't be accessed. Please try a different video."
+            elif "private" in raw_error or "unavailable" in raw_error:
+                friendly = "This video is private or has been removed. Please try a different one."
+            elif "caption" in raw_error or "transcript" in raw_error or "subtitle" in raw_error:
+                friendly = "This video doesn't have captions enabled. Try a video that has subtitles available."
+            elif "age" in raw_error or "restricted" in raw_error:
+                friendly = "This video is age-restricted and can't be processed. Please try another one."
+            elif "live" in raw_error or "stream" in raw_error:
+                friendly = "Live streams can't be processed. Please use a regular YouTube video."
+            elif r.status_code == 401 or r.status_code == 403:
+                friendly = "This video can't be accessed right now. It may be region-locked, private, or have captions disabled."
+            elif r.status_code == 404:
+                friendly = "Video not found. Please check the URL and try again."
+            elif r.status_code == 429:
+                friendly = "Too many requests right now. Please wait a moment and try again."
+            else:
+                friendly = "Couldn't extract this video's transcript. Try a different video with captions enabled."
+
+            return JSONResponse(status_code=400, content={"error": friendly})
 
         data = r.json()
 
@@ -214,7 +238,7 @@ async def upload_youtube(url: str = Form(...)):
 
         if not full_text or len(full_text.strip()) < 100:
             return JSONResponse(status_code=400, content={
-                "error": "No transcript found for this video."
+                "error": "This video doesn't seem to have enough content in its captions. Try a video with a longer transcript."
             })
 
         vs, chunk_count = index_text(full_text, f"youtube/{video_id}")
@@ -238,7 +262,9 @@ async def upload_youtube(url: str = Form(...)):
         }
 
     except Exception as e:
-        return JSONResponse(status_code=500, content={"error": str(e)})
+        return JSONResponse(status_code=500, content={
+            "error": "Something went wrong while fetching the transcript. Please try again."
+        })
 
 
 @app.post("/api/chat")
