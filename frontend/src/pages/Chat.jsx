@@ -28,7 +28,9 @@ export default function Chat() {
   const [compareInput, setCompareInput] = useState('')
   const [compareLoading, setCompareLoading] = useState(false)
   const [analytics, setAnalytics] = useState(null)
+  const [listening, setListening] = useState(false)
   const messagesEndRef = useRef(null)
+  const recognitionRef = useRef(null)
 
   useEffect(() => {
     axios.get(`${API}/api/state`).then(r => {
@@ -62,6 +64,46 @@ export default function Chat() {
     } catch(e) {
       setMessages(prev => [...prev, {role:'assistant', content:'❌ Error: ' + (e.response?.data?.error || 'Something went wrong')}])
     } finally { setLoading(false) }
+  }
+
+  const toggleVoice = () => {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
+    if (!SpeechRecognition) {
+      alert('Voice input requires Chrome, Edge, or Safari. Please use one of these browsers.')
+      return
+    }
+
+    if (listening && recognitionRef.current) {
+      recognitionRef.current.stop()
+      setListening(false)
+      return
+    }
+
+    const recognition = new SpeechRecognition()
+    recognition.lang = 'en-US'
+    recognition.interimResults = false
+    recognition.maxAlternatives = 1
+    recognition.continuous = false
+
+    recognition.onstart = () => setListening(true)
+
+    recognition.onresult = (event) => {
+      const transcript = event.results[0][0].transcript
+      setInput(prev => prev ? `${prev} ${transcript}` : transcript)
+    }
+
+    recognition.onerror = (event) => {
+      console.error('Speech error:', event.error)
+      setListening(false)
+      if (event.error === 'not-allowed') {
+        alert('Microphone permission denied. Please allow microphone access in your browser settings.')
+      }
+    }
+
+    recognition.onend = () => setListening(false)
+
+    recognitionRef.current = recognition
+    recognition.start()
   }
 
   const runTool = async (tool) => {
@@ -619,6 +661,34 @@ export default function Chat() {
         .stat-num { font-family: 'Syne',sans-serif; font-size: 44px; font-weight: 800; line-height: 1; color: #0a0a0a; letter-spacing: -0.03em; }
         .stat-label { font-size: 11px; color: #a0a0a0; text-transform: uppercase; letter-spacing: 0.12em; margin-top: 10px; font-weight: 600; }
 
+        .mic-btn {
+  background: #f8f8f8;
+  color: #5a5a5a;
+  border: 1px solid #e2e2e2;
+  border-radius: 12px;
+  width: 38px; height: 38px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+.mic-btn:hover:not(:disabled) {
+  background: #f0f0f0;
+  border-color: #d0d0d0;
+  color: #0a0a0a;
+}
+.mic-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.mic-btn.listening {
+  background: #fef2f2;
+  border-color: #fca5a5;
+  color: #dc2626;
+  animation: micPulse 1.5s ease-in-out infinite;
+}
+@keyframes micPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(220,38,38,0.4); }
+  50% { box-shadow: 0 0 0 8px rgba(220,38,38,0); }
+}
+
         /* ── TIMELINE ── */
         .timeline-wrap {
           position: relative;
@@ -1146,14 +1216,22 @@ export default function Chat() {
             </div>
           )}
 
-          {activeTab === 'compare' && compareLoaded && (
-            <div className="input-wrap">
-              <div className="input-inner">
-                <input className="input-field" value={compareInput} onChange={e=>setCompareInput(e.target.value)} onKeyDown={e=>{if(e.key==='Enter')sendCompare()}} placeholder="Ask anything about both documents..."/>
-                <button className="send-btn" onClick={sendCompare}>→</button>
-              </div>
-            </div>
-          )}
+{/* CHAT INPUT */}
+{activeTab === 'chat' && (
+  <div className="input-wrap">
+    <div className="input-inner">
+      <input className="input-field" value={input} onChange={e=>setInput(e.target.value)} onKeyDown={e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage()}}} placeholder={listening ? "🎙 Listening..." : "Ask anything about your content..."} disabled={loading}/>
+      <button className={`mic-btn ${listening ? 'listening' : ''}`} onClick={toggleVoice} disabled={loading} title="Voice input">
+        {listening ? (
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="#dc2626"><circle cx="12" cy="12" r="10"/></svg>
+        ) : (
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+        )}
+      </button>
+      <button className="send-btn" onClick={()=>sendMessage()} disabled={!input.trim()||loading}>→</button>
+    </div>
+  </div>
+)}
 
         </main>
       </div>
