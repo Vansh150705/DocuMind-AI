@@ -214,176 +214,170 @@ export default function Landing() {
   /*   RESPONSIVE BREAKPOINTS              */
   /* ════════════════════════════════════ */
 
-  @media (max-width: 768px) {
-    /* GLOBAL OVERFLOW */
-    body, html, #root, main, section, div {
-      max-width: 100vw !important;
-      overflow-x: hidden !important;
-    }
-
-/* TYPEWRITER */
-h1 span {
-  white-space: nowrap !important;
-  display: inline-block !important;
-}
-
-    /* NAV */
-    nav { top: 16px !important; padding: 0 12px !important; }
-    .nav-inner { padding: 8px 14px !important; }
-    .nav-links { display: none !important; }
-    .nav-logo { font-size: 15px !important; }
-    .nav-cta { padding: 7px 12px !important; font-size: 11px !important; }
-
-    /* BANNER */
-    body > div:first-child { font-size: 11px !important; padding: 8px 14px !important; }
-
-    /* HERO SECTION */
-    section[style*="minHeight"] {
-      padding: 100px 20px 40px !important;
-      min-height: auto !important;
-    }
-    section[style*="minHeight"] > div {
-      display: block !important;
-      width: 100% !important;
-      max-width: 100% !important;
-    }
-section[style*="minHeight"] > div > div:nth-child(2),
-section[style*="minHeight"] .browser-frame,
-section[style*="minHeight"] .conf-badge,
-section[style*="minHeight"] .source-badge {
-  display: none !important;
-}
-    section[style*="minHeight"] > div > div:first-child {
-      width: 100% !important;
-      max-width: 100% !important;
-    }
-
-/* HERO H1 */
-section[style*="minHeight"] h1 {
-  font-size: 36px !important;
-  line-height: 1.15 !important;
-  max-width: 100% !important;
-  width: 100% !important;
-}
-
-    /* HERO P */
-    section[style*="minHeight"] p {
-      font-size: 15px !important;
-      line-height: 1.55 !important;
-      max-width: 100% !important;
-    }
-
-    /* HERO BUTTONS — stack */
-    section[style*="minHeight"] div[style*="gap:14"],
-    section[style*="minHeight"] div[style*="gap: 14"] {
-      display: block !important;
-      width: 100% !important;
-    }
-    section[style*="minHeight"] div[style*="gap:14"] > button {
-      display: flex !important;
-      width: 100% !important;
-      justify-content: center !important;
-      margin-bottom: 10px !important;
-      padding: 14px !important;
-      font-size: 14px !important;
-    }
-    section[style*="minHeight"] div[style*="gap:14"] > a {
-      display: block !important;
-      width: 100% !important;
-      text-decoration: none !important;
-    }
-    section[style*="minHeight"] div[style*="gap:14"] > a > button {
-      width: 100% !important;
-      display: flex !important;
-      justify-content: center !important;
-    }
-
-    /* Trusted by */
-    section[style*="minHeight"] div[style*="fontSize:13"] {
-      font-size: 12px !important;
-      flex-wrap: wrap !important;
-    }
-
-    /* CHARACTERS */
-    section[id="sources"] { padding: 60px 20px !important; }
-    section[id="sources"] > div:last-child {
-      grid-template-columns: 1fr !important;
-      max-width: 400px !important;
-      margin: 0 auto !important;
-    }
-    section[id="sources"] h2 { font-size: 32px !important; }
-    section[id="sources"] > p { font-size: 14px !important; }
-    .char-card {
-      padding: 32px 24px !important;
-      min-height: auto !important;
-    }
-
-    /* STATS BAR */
-    div[style*="grid-template-columns: repeat(4,1fr)"] {
-      grid-template-columns: repeat(2, 1fr) !important;
-      gap: 32px !important;
-    }
-    div[style*="background:'#0a0a0a'"][style*="padding:'48px 40px'"] > div {
-      grid-template-columns: repeat(2, 1fr) !important;
-      gap: 32px !important;
-    }
-    div[style*="background:'#0a0a0a'"][style*="padding:'48px 40px'"] > div > div {
-      width: 100% !important;
-    }
-
-    /* FEATURES */
-    section[id="features"] { padding: 60px 20px !important; }
-    section[id="features"] h2 { font-size: 32px !important; }
-    section[id="features"] > div > div:last-child {
-      grid-template-columns: 1fr !important;
-      gap: 16px !important;
-    }
-    .feat-card { padding: 24px !important; }
-
-    /* HOW IT WORKS */
-    section[id="how-it-works"] { padding: 60px 20px !important; }
-    section[id="how-it-works"] h2 { font-size: 32px !important; }
-    .steps-grid {
-      grid-template-columns: 1fr !important;
-      gap: 48px !important;
-    }
-    .step-line { display: none !important; }
-    .step { padding: 0 !important; }
-
-    /* CTA SECTION */
-    section[style*="background:'#fff'"]:last-of-type { padding: 60px 20px !important; }
-    section[style*="background:'#fff'"]:last-of-type > div {
-      padding: 50px 24px !important;
-      border-radius: 24px !important;
-    }
-    section[style*="background:'#fff'"]:last-of-type h2 {
-      font-size: 32px !important;
-    }
-    .cta-feature-grid {
-      grid-template-columns: 1fr !important;
-      gap: 12px !important;
-    }
-
-    /* FOOTER */
-    footer { padding: 40px 20px 30px !important; }
-    footer > div > div:first-child {
-      grid-template-columns: 1fr !important;
-      gap: 32px !important;
-    }
-    footer > div > div:last-child {
-      flex-direction: column !important;
-      text-align: center !important;
-      gap: 8px !important;
-    }
+@media (max-width: 768px) {
+  /* GLOBAL */
+  * {
+    max-width: 100vw !important;
+    word-break: normal !important;
+  }
+  body, html, #root {
+    overflow-x: hidden !important;
+    width: 100% !important;
+    max-width: 100vw !important;
   }
 
-  @media (max-width: 480px) {
-    section[style*="minHeight"] h1 { font-size: 24px !important; }
-    h2 { font-size: 26px !important; }
-    .nav-logo { font-size: 14px !important; }
-    .nav-cta { font-size: 10px !important; padding: 6px 10px !important; }
-    .char-card { padding: 24px 16px !important; }
+  /* HIDE BROWSER MOCKUP — multiple targets */
+  .browser-frame,
+  .conf-badge,
+  .source-badge {
+    display: none !important;
   }
+  section[style*="minHeight"] > div > div:last-child {
+    display: none !important;
+  }
+
+  /* NAV */
+  nav { top: 16px !important; padding: 0 12px !important; }
+  .nav-inner { padding: 8px 14px !important; }
+  .nav-links { display: none !important; }
+  .nav-logo { font-size: 15px !important; }
+  .nav-cta { padding: 7px 12px !important; font-size: 11px !important; }
+
+  /* BANNER */
+  body > div:first-child { font-size: 11px !important; padding: 8px 14px !important; }
+
+  /* HERO — force single column */
+  section[style*="minHeight"] {
+    padding: 100px 20px 40px !important;
+    min-height: auto !important;
+  }
+  section[style*="minHeight"] > div {
+    grid-template-columns: 1fr !important;
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  /* HERO H1 — NO WORD BREAKING */
+  section[style*="minHeight"] h1 {
+    font-size: 32px !important;
+    line-height: 1.15 !important;
+    word-break: keep-all !important;
+    overflow-wrap: normal !important;
+    word-wrap: normal !important;
+    hyphens: none !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  /* TYPEWRITER — keep word on one line */
+  section[style*="minHeight"] h1 span {
+    white-space: nowrap !important;
+    display: inline-block !important;
+    word-break: keep-all !important;
+  }
+
+  /* HERO P */
+  section[style*="minHeight"] p {
+    font-size: 15px !important;
+    line-height: 1.55 !important;
+    max-width: 100% !important;
+  }
+
+  /* HERO BUTTONS */
+  section[style*="minHeight"] div[style*="gap:14"] {
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+    gap: 10px !important;
+  }
+  section[style*="minHeight"] div[style*="gap:14"] > button,
+  section[style*="minHeight"] div[style*="gap:14"] > a {
+    width: 100% !important;
+  }
+  section[style*="minHeight"] div[style*="gap:14"] button {
+    width: 100% !important;
+    justify-content: center !important;
+    padding: 14px !important;
+    font-size: 14px !important;
+  }
+  section[style*="minHeight"] div[style*="gap:14"] a {
+    text-decoration: none !important;
+    display: block !important;
+  }
+
+  /* Trusted by */
+  section[style*="minHeight"] div[style*="fontSize:13"] {
+    font-size: 12px !important;
+    flex-wrap: wrap !important;
+  }
+
+  /* CHARACTERS */
+  section[id="sources"] { padding: 60px 20px !important; }
+  section[id="sources"] > div:last-child {
+    grid-template-columns: 1fr !important;
+    max-width: 400px !important;
+    margin: 0 auto !important;
+  }
+  section[id="sources"] h2 { font-size: 32px !important; }
+  section[id="sources"] > p { font-size: 14px !important; }
+  .char-card {
+    padding: 32px 24px !important;
+    min-height: auto !important;
+  }
+
+  /* STATS */
+  div[style*="grid-template-columns: repeat(4,1fr)"] {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 32px !important;
+  }
+
+  /* FEATURES */
+  section[id="features"] { padding: 60px 20px !important; }
+  section[id="features"] h2 { font-size: 32px !important; }
+  section[id="features"] > div > div:last-child {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+  .feat-card { padding: 24px !important; }
+
+  /* HOW IT WORKS */
+  section[id="how-it-works"] { padding: 60px 20px !important; }
+  section[id="how-it-works"] h2 { font-size: 32px !important; }
+  .steps-grid {
+    grid-template-columns: 1fr !important;
+    gap: 48px !important;
+  }
+  .step-line { display: none !important; }
+  .step { padding: 0 !important; }
+
+  /* CTA */
+  section[style*="background:'#fff'"]:last-of-type { padding: 60px 20px !important; }
+  section[style*="background:'#fff'"]:last-of-type > div {
+    padding: 50px 24px !important;
+    border-radius: 24px !important;
+  }
+  section[style*="background:'#fff'"]:last-of-type h2 {
+    font-size: 32px !important;
+  }
+  .cta-feature-grid {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+
+  /* FOOTER */
+  footer { padding: 40px 20px 30px !important; }
+  footer > div > div:first-child {
+    grid-template-columns: 1fr !important;
+    gap: 32px !important;
+  }
+  footer > div > div:last-child {
+    flex-direction: column !important;
+    text-align: center !important;
+    gap: 8px !important;
+  }
+}
 `}</style>
 
       {/* Banner */}
