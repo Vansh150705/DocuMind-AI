@@ -415,7 +415,7 @@ html, body {
               <button onClick={() => navigate('/upload')} style={{background:'#0a0a0a',color:'#fff',border:'none',borderRadius:100,padding:'16px 32px',fontSize:16,fontWeight:600,display:'flex',alignItems:'center',gap:8,transition:'all 0.25s'}}>
                 Get Started Free <span>→</span>
               </button>
-<a href="https://github.com/Vansh150705/DocuMind-AI" target="_blank" rel="noopener noreferrer" style={{textDecoration:'none'}}>
+<a href="https://github.com/Vansh150705/TalkDox" target="_blank" rel="noopener noreferrer" style={{textDecoration:'none'}}>
   <button style={{background:'transparent',color:'#0a0a0a',border:'1.5px solid #e2e2e2',borderRadius:100,padding:'16px 32px',fontSize:16,fontWeight:500,transition:'all 0.25s',cursor:'pointer',fontFamily:'DM Sans, sans-serif'}}>
     ⭐ Star on GitHub
   </button>
@@ -758,7 +758,7 @@ html, body {
       <div>
         <h4 style={{fontSize:13,fontWeight:700,textTransform:'uppercase',letterSpacing:'0.08em',marginBottom:16,color:'#a0a0a0'}}>Connect</h4>
         {[
-          {name:'GitHub',href:'https://github.com/Vansh150705/DocuMind-AI'},
+          {name:'GitHub',href:'https://github.com/Vansh150705/TalkDox'},
           {name:'LinkedIn',href:'https://www.linkedin.com/in/vansh-mahajan-napv/'},
         ].map(l=>(
           <a key={l.name} href={l.href} target="_blank" rel="noopener noreferrer"
